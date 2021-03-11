@@ -26,9 +26,9 @@ function SmartSprinklers (log, config) {
   this.zones = config.zones || 6
 //  this.pollInterval = config.pollInterval || 300
 
-  this.listener = config.listener || false
-  this.port = config.port || 2000
-  this.requestArray = ['state']
+//  this.listener = config.listener || false
+//  this.port = config.port || 2000
+//  this.requestArray = ['state']
 
   this.disableScheduling = config.disableScheduling || false
   this.disableAdaptiveWatering = config.disableAdaptiveWatering || false
@@ -65,7 +65,7 @@ function SmartSprinklers (log, config) {
   this.zoneDuration = []
 
   this.manufacturer = config.manufacturer || packageJson.author.name
-  this.serial = config.serial || this.apiroute
+  this.serial = config.serial || this.latitude
   this.model = config.model || packageJson.name
   this.firmware = config.firmware || packageJson.version
 
@@ -307,8 +307,6 @@ this.log('Wind term (ET_wind): %s mm/day', ET_wind)
 var ET_o = ET_rad + ET_wind
 this.log('Reference Evapotranspiration Value (ET_o): %s mm/day', ET_o.toFixed(2))
 this.log('---------------------It Worked---------------------------')
-
-
 
         if (!this.restrictedDays.includes(waterDay.sunrise.getDay()) && !this.restrictedMonths.includes(waterDay.sunrise.getMonth()) && today.rain < this.rainThreshold && tomorrow.rain < this.rainThreshold && waterDay.min > this.lowThreshold && waterDay.max > this.highThreshold) {
           var zoneMaxDuration = this.defaultDuration

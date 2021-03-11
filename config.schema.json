@@ -1,15 +1,23 @@
 {
     "pluginAlias": "SmartSprinklers",
     "pluginType": "platform",
+    "headerDisplay": "Homebridge plugin for climate based adaptive irrigation control",
+    "footerDisplay": "Created by @mTry",
     "singular": true,
     "schema": {
       "type": "object",
       "properties": {
         "name": {
-          "title": "Name",
+          "title": "Accessory Name (Irrigation)",
           "type": "string",
           "required": true,
           "default": "Irrigation"
+        },
+        "zones": {
+          "title": "Number of Zones (6)",
+          "type": "integer",
+          "required": true,
+          "default": "6"
         }
       }
     }
