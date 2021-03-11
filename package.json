@@ -34,7 +34,6 @@
   "author": {
     "name": "Mayank Tandon"
   },
-  
   "bundleDependencies": false,
   "dependencies": {
     "node-schedule": ">=1.3.2",
