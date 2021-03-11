@@ -1,23 +1,60 @@
 {
     "pluginAlias": "SmartSprinklers",
     "pluginType": "platform",
-    "headerDisplay": "Homebridge plugin for climate based adaptive irrigation control",
+    "headerDisplay": "Homebridge plugin for climate based adaptive irrigation control. Default values mentioned in description.",
     "footerDisplay": "Created by @mTry",
     "singular": true,
     "schema": {
       "type": "object",
       "properties": {
         "name": {
-          "title": "Accessory Name (Irrigation)",
+          "title": "Accessory Name:",
+          "description": "Name for the accessory [Irrigation]",
           "type": "string",
           "required": true,
           "default": "Irrigation"
         },
         "zones": {
-          "title": "Number of Zones (6)",
+          "title": "Zones:",
+          "description": "Number of Zones to expose. [6]",
           "type": "integer",
-          "required": true,
+          "required": false,
           "default": "6"
+        },
+        "disableScheduling": {
+          "title": "Disable Scheduling:",
+          "description": "Disable Scheduling Irrigation Cycles. [false]",
+          "type": "boolean",
+          "required": false,
+          "default": "false"
+        },
+        "disableAdaptiveWatering": {
+          "title": "Disable Adaptive Control:",
+          "description": "Enable if you dont want climate based adaptive calculations. [false]",
+          "type": "boolean",
+          "required": false,
+          "default": "false"
+        },
+        "latitude": {
+          "title": "Latitude:",
+          "description": "Enter the latitude in decimals including '-' if in the southern hemisphere.",
+          "type": "number",
+          "required": true,
+          "default": "0.0"
+        },
+        "longitude": {
+          "title": "Longitude:",
+          "description": "Enter the longitude in decimals.",
+          "type": "number",
+          "required": true,
+          "default": "0.0"
+        },
+        "altitude": {
+          "title": "Altitude:",
+          "description": "Enter the altitude in meters.",
+          "type": "number",
+          "required": true,
+          "default": "0.0"
         }
       }
     }
