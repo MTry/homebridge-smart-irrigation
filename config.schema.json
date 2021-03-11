@@ -54,6 +54,8 @@
           "description": "Enter the altitude in meters.",
           "type": "number",
           "required": true,
+          "minimum": "0",
+          "maximum": "10000",
           "default": "0.0"
         }
       }
