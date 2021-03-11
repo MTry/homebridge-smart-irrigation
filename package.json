@@ -1,0 +1,40 @@
+{
+  "private": true,
+  "displayName": "Homebridge Smart Irrigation",
+  "name": "homebridge-smart-irrigation",
+  "version": "1.0.0",
+  "description": "Adaptive Climate based Irrigation control of sprinklers.",
+  "license": "MIT",
+  "_requiredBy": [
+    "#USER"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/MTry/homebridge-smart-irrigation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MTry/homebridge-smart-irrigation/issues"
+  },
+  "engines": {
+    "homebridge": ">=0.4.50",
+    "node": ">=12.13.0"
+  },
+  "main": "index.js",
+  "scripts": {
+    "watch": "npm run build && npm link",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "irrigation",
+    "sprinkler",
+    "adaptive",
+    "automation"
+  ],
+  "bundleDependencies": false,
+  "dependencies": {
+    "node-schedule": ">=1.3.2",
+    "request": ">=2.88.0"
+  },
+  "deprecated": false
+}
