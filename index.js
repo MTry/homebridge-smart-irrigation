@@ -2,8 +2,8 @@ var Service, Characteristic
 const packageJson = require('./package.json')
 const schedule = require('node-schedule')
 const request = require('request')
-const ip = require('ip')
-const http = require('http')
+//const ip = require('ip')
+//const http = require('http')
 
 function minTommss(minutes){
  var sign = minutes < 0 ? "-" : "";
@@ -12,20 +12,19 @@ function minTommss(minutes){
  return sign + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
 }
 
-
 module.exports = function (homebridge) {
   Service = homebridge.hap.Service
   Characteristic = homebridge.hap.Characteristic
-  homebridge.registerAccessory('homebridge-web-sprinklers', 'WebSprinklers', WebSprinklers)
+  homebridge.registerAccessory('homebridge-smart-irrigation', 'SmartSprinklers', SmartSprinklers)
 }
 
-function WebSprinklers (log, config) {
+function SmartSprinklers (log, config) {
   this.log = log
 
   this.name = config.name
-  this.apiroute = config.apiroute
+//  this.apiroute = config.apiroute
   this.zones = config.zones || 6
-  this.pollInterval = config.pollInterval || 300
+//  this.pollInterval = config.pollInterval || 300
 
   this.listener = config.listener || false
   this.port = config.port || 2000
@@ -53,7 +52,6 @@ function WebSprinklers (log, config) {
   this.cycles = config.cycles || 2
 
   this.zonePercentages = config.zonePercentages || new Array(this.zones).fill(100)
-
   this.Sunday = config.Sunday || new Array(this.zones).fill(100)
   this.Monday = config.Monday || new Array(this.zones).fill(100)
   this.Tuesday = config.Tuesday || new Array(this.zones).fill(100)
@@ -71,41 +69,41 @@ function WebSprinklers (log, config) {
   this.model = config.model || packageJson.name
   this.firmware = config.firmware || packageJson.version
 
-  this.username = config.username || null
-  this.password = config.password || null
-  this.timeout = config.timeout || 3000
-  this.http_method = config.http_method || 'GET'
+//  this.username = config.username || null
+//  this.password = config.password || null
+//  this.timeout = config.timeout || 3000
+//  this.http_method = config.http_method || 'GET'
 
-  if (this.username != null && this.password != null) {
-    this.auth = {
-      user: this.username,
-      pass: this.password
-    }
-  }
+//  if (this.username != null && this.password != null) {
+//    this.auth = {
+//      user: this.username,
+//      pass: this.password
+//    }
+//  }
 
-  if (this.listener) {
-    this.server = http.createServer(function (request, response) {
-      var baseURL = 'http://' + request.headers.host + '/'
-      var url = new URL(request.url, baseURL)
-      if (this.requestArray.includes(url.pathname.substr(1))) {
-        this.log.debug('Handling request')
-        response.end('Handling request')
-        this._httpHandler(url.searchParams.get('zone'), url.pathname.substr(1), url.searchParams.get('value'))
-      } else {
-        this.log.warn('Invalid request: %s', request.url)
-        response.end('Invalid request')
-      }
-    }.bind(this))
+//  if (this.listener) {
+//    this.server = http.createServer(function (request, response) {
+//      var baseURL = 'http://' + request.headers.host + '/'
+//      var url = new URL(request.url, baseURL)
+//      if (this.requestArray.includes(url.pathname.substr(1))) {
+//        this.log.debug('Handling request')
+//        response.end('Handling request')
+//        this._httpHandler(url.searchParams.get('zone'), url.pathname.substr(1), url.searchParams.get('value'))
+//      } else {
+//        this.log.warn('Invalid request: %s', request.url)
+//        response.end('Invalid request')
+//      }
+//    }.bind(this))
 
-    this.server.listen(this.port, function () {
-      this.log('Listen server: http://%s:%s', ip.address(), this.port)
-    }.bind(this))
-  }
+//    this.server.listen(this.port, function () {
+//      this.log('Listen server: http://%s:%s', ip.address(), this.port)
+//    }.bind(this))
+//  }
 
   this.service = new Service.IrrigationSystem(this.name)
 }
 
-WebSprinklers.prototype = {
+SmartSprinklers.prototype = {
 
   identify: function (callback) {
     this.log('Identify requested!')
@@ -126,42 +124,42 @@ WebSprinklers.prototype = {
     })
   },
 
-  _getStatus: function (callback) {
-    var url = this.apiroute + '/status'
-    this.log.debug('Getting status: %s', url)
+//  _getStatus: function (callback) {
+//    var url = this.apiroute + '/status'
+//    this.log.debug('Getting status: %s', url)
 
-    this._httpRequest(url, '', 'GET', function (error, response, responseBody) {
-      if (error) {
-        this.log.warn('Error getting status: %s', error.message)
-        this.service.getCharacteristic(Characteristic.Active).updateValue(new Error('Polling failed'))
-        callback(error)
-      } else {
-        this.service.getCharacteristic(Characteristic.Active).updateValue(1)
-        this.log.debug('Device response: %s', responseBody)
-        var json = JSON.parse(responseBody)
+//    this._httpRequest(url, '', 'GET', function (error, response, responseBody) {
+//      if (error) {
+//        this.log.warn('Error getting status: %s', error.message)
+//        this.service.getCharacteristic(Characteristic.Active).updateValue(new Error('Polling failed'))
+//        callback(error)
+//      } else {
+//        this.service.getCharacteristic(Characteristic.Active).updateValue(1)
+//        this.log.debug('Device response: %s', responseBody)
+//        var json = JSON.parse(responseBody)
 
-        for (var zone = 1; zone <= this.zones; zone++) {
-          var value = json[zone - 1].state
-          this.log.debug('Zone %s | Updated state to: %s', zone, value)
-          this.valveAccessory[zone].getCharacteristic(Characteristic.Active).updateValue(value)
-          this.valveAccessory[zone].getCharacteristic(Characteristic.InUse).updateValue(value)
-        }
-        callback()
-      }
-    }.bind(this))
-  },
+//        for (var zone = 1; zone <= this.zones; zone++) {
+//          var value = json[zone - 1].state
+//          this.log.debug('Zone %s | Updated state to: %s', zone, value)
+//          this.valveAccessory[zone].getCharacteristic(Characteristic.Active).updateValue(value)
+//          this.valveAccessory[zone].getCharacteristic(Characteristic.InUse).updateValue(value)
+//        }
+//        callback()
+//      }
+//    }.bind(this))
+//  },
 
-  _httpHandler: function (zone, characteristic, value) {
-    switch (characteristic) {
-      case 'state':
-        this.valveAccessory[zone].getCharacteristic(Characteristic.Active).updateValue(value)
-        this.valveAccessory[zone].getCharacteristic(Characteristic.InUse).updateValue(value)
-        this.log('Zone %s | Updated %s to: %s', zone, characteristic, value)
-        break
-      default:
-        this.log.warn('Zone %s | Unknown characteristic "%s" with value "%s"', zone, characteristic, value)
-    }
-  },
+//  _httpHandler: function (zone, characteristic, value) {
+//    switch (characteristic) {
+//      case 'state':
+//        this.valveAccessory[zone].getCharacteristic(Characteristic.Active).updateValue(value)
+//        this.valveAccessory[zone].getCharacteristic(Characteristic.InUse).updateValue(value)
+//        this.log('Zone %s | Updated %s to: %s', zone, characteristic, value)
+//        break
+//      default:
+//        this.log.warn('Zone %s | Unknown characteristic "%s" with value "%s"', zone, characteristic, value)
+//    }
+//  },
 
   _calculateSchedule: function (callback) {
     var url = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + this.latitude + '&lon=' + this.longitude + '&exclude=current,hourly&units=metric&appid=' + this.key
