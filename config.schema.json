@@ -4,7 +4,7 @@
     "footerDisplay": "Created by Mayank Tandon - @mTry",
     "pluginType": "accessory",
     "singular": false,
-    
+   
     "schema": {
       "type": "object",
       "properties": {
@@ -69,78 +69,7 @@
           "type": "string",
           "required": true
         },
-        "SolarRad": {
-          "title": "Solar Irradiance:",
-          "type": "array",
-          "description": "Mean daily solar irradiance value for the month. Refer instructions.[6][kWh/m2/day]",
-          "minItems": 1,
-          "maxItems": 1,
-          "items": {
-            "type": "object",
-            "properties": {
-              "SolarRad[0]": {
-                "type": "number",
-                "title": "Jan",
-                "default": 6
-              },
-              "SolarRad[1]": {
-                "type": "number",
-                "title": "Feb",
-                "default": 6
-              },
-              "SolarRad[2]": {
-                "type": "number",
-                "title": "Mar",
-                "default": 6
-              },
-              "SolarRad[3]": {
-                "type": "number",
-                "title": "Apr",
-                "default": 6
-              },
-              "SolarRad[4]": {
-                "type": "number",
-                "title": "May",
-                "default": 6
-              },
-              "SolarRad[5]": {
-                "type": "number",
-                "title": "Jun",
-                "default": 6
-              },
-              "SolarRad[6]": {
-                "type": "number",
-                "title": "Jul",
-                "default": 6
-              },
-              "SolarRad[7]": {
-                "type": "number",
-                "title": "Aug",
-                "default": 6
-              },
-              "SolarRad[8]": {
-                "type": "number",
-                "title": "Sep",
-                "default": 6
-              },
-              "SolarRad[9]": {
-                "type": "number",
-                "title": "Oct",
-                "default": 6
-              },
-              "SolarRad[10]": {
-                "type": "number",
-                "title": "Nov",
-                "default": 6
-              },
-              "SolarRad[11]": {
-                "type": "number",
-                "title": "Dec",
-                "default": 6
-              }
-            }
-          }
-        },
+
         "lowThreshold": {
           "title": "Lower Threshold Temperature:",
           "description": "Skip scheduling when forecasted minimum temperature falls below this. [10°C][4°C - 20°C]",
@@ -203,104 +132,6 @@
           "minimum": -1440,
           "maximum": 1440,
           "default": 0
-        },
-        "restrictedDays": {
-          "type": "array",
-          "description": "Watering will not be scheduled on the checked days - this overrides the zone % setting.",
-          "minItems": 1,
-          "maxItems": 1,
-          "items": {
-            "type": "object",
-            "properties": {
-              "restrictedDays[0]": {
-                "type": "boolean",
-                "title": "Sunday"
-              },
-              "restrictedDays[1]": {
-                "type": "boolean",
-                "title": "Monday"
-              },
-              "restrictedDays[2]": {
-                "type": "boolean",
-                "title": "Tuesday"
-              },
-              "restrictedDays[3]": {
-                "type": "boolean",
-                "title": "Wednesday"
-              },
-              "restrictedDays[4]": {
-                "type": "boolean",
-                "title": "Thursday"
-              },
-              "restrictedDays[5]": {
-                "type": "boolean",
-                "title": "Friday"
-              },
-              "restrictedDays[6]": {
-                "type": "boolean",
-                "title": "Saturday"
-              }
-            }
-          }
-        },
-        "restrictedMonths": {
-          "type": "array",
-          "description": "Watering will not be scheduled during the checked months - this overrides all other the zone setting.",
-          "minItems": 1,
-          "maxItems": 1,
-          "items": {
-            "type": "object",
-            "properties": {
-              "restrictedMonths[0]": {
-                "type": "boolean",
-                "title": "Jan"
-              },
-              "restrictedMonths[1]": {
-                "type": "boolean",
-                "title": "Feb"
-              },
-              "restrictedMonths[2]": {
-                "type": "boolean",
-                "title": "Mar"
-              },
-              "restrictedMonths[3]": {
-                "type": "boolean",
-                "title": "Apr"
-              },
-              "restrictedMonths[4]": {
-                "type": "boolean",
-                "title": "May"
-              },
-              "restrictedMonths[5]": {
-                "type": "boolean",
-                "title": "Jun"
-              },
-              "restrictedMonths[6]": {
-                "type": "boolean",
-                "title": "Jul"
-              },
-              "restrictedMonths[7]": {
-                "type": "boolean",
-                "title": "Aug"
-              },
-              "restrictedMonths[8]": {
-                "type": "boolean",
-                "title": "Sep"
-              },
-              "restrictedMonths[9]": {
-                "type": "boolean",
-                "title": "Oct"
-              },
-              "restrictedMonths[10]": {
-                "type": "boolean",
-                "title": "Nov"
-              },
-              "restrictedMonths[11]": {
-                "type": "boolean",
-                "title": "Dec"
-              }
-            }
-          }
         }          
       }
     },
