@@ -37,6 +37,7 @@ function SmartSprinklers (log, config) {
   this.longitude = config.longitude
   this.altitude = config.altitude || 1
   this.key = config.key
+  this.verbosed = config.verbosed || true
 
   this.restrictedDays = config.restrictedDays || []
   this.restrictedMonths = config.restrictedMonths || []
@@ -241,7 +242,7 @@ SmartSprinklers.prototype = {
         }
 
 var T_mean = (waterDay.max + waterDay.min) / 2
-this.log('Mean daily temperature: %s °C', T_mean)
+if (verbosed) {this.log('Mean daily temperature: %s °C', T_mean)}
 this.log('SolarRad: %s', this.SolarRad[waterDay.sunrise.getMonth()])
 var R_s = this.SolarRad[waterDay.sunrise.getMonth()] * 3.6
 this.log('Mean daily solar radiation (R_s): %s MJ m-2 day-1', R_s)

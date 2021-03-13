@@ -22,6 +22,13 @@
           "required": false,
           "default": "6"
         },
+        "verbosed": {
+          "title": "Verbose Calculations and Extended Climate data",
+          "description": "Enable for detailed calculation variables display.[true]",
+          "type": "boolean",
+          "required": false,
+          "default": true
+        },
         "disableScheduling": {
           "title": "Disable Scheduling",
           "description": "Disable Scheduling Irrigation Cycles. [false]",
@@ -69,7 +76,6 @@
           "type": "string",
           "required": true
         },
-
         "lowThreshold": {
           "title": "Lower Threshold Temperature:",
           "description": "Skip scheduling when forecasted minimum temperature falls below this. [10°C][4°C - 20°C]",
