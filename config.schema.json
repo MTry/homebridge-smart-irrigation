@@ -3,7 +3,7 @@
     "headerDisplay": "Homebridge plugin for climate based adaptive irrigation sprinkler control. Default [values][range] mentioned in description.",
     "footerDisplay": "Created by Mayank Tandon - @mTry",
     "pluginType": "accessory",
-    "singular": false,
+    "singular": true,
    
     "schema": {
       "type": "object",
