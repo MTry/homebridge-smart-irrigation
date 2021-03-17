@@ -1,6 +1,6 @@
 {
   "private": true,
-  "displayName": "Homebridge Smart Irrigation Sprinklers",
+  "displayName": "Homebridge Smart Irrigation Sprinkler System",
   "name": "homebridge-smart-irrigation-sprinkler",
   "version": "1.0.0",
   "description": "Adaptive Climate based Irrigation control of sprinklers.",
@@ -10,7 +10,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/MTry/homebridge-smart-irrigation-sprinkler"
+    "url": "git://github.com/MTry/homebridge-smart-irrigation-sprinkler.git"
   },
   "bugs": {
     "url": "https://github.com/MTry/homebridge-smart-irrigation-sprinkler/issues"
@@ -23,8 +23,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "watch": "npm run build && npm link",
-    "prepublishOnly": "npm run build",
+    "watch": "npm link",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -36,7 +35,9 @@
     "climate",
     "weather",
     "watering",
-    "garden"
+    "garden",
+    "smart",
+    "valve"
   ],
   "author": {
     "name": "Mayank Tandon"
