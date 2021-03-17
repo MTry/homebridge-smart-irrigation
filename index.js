@@ -13,7 +13,7 @@ function minTommss(minutes){
 module.exports = function (homebridge) {
   Service = homebridge.hap.Service
   Characteristic = homebridge.hap.Characteristic
-  homebridge.registerAccessory('homebridge-smart-irrigation', 'SmartSprinklers', SmartSprinklers)
+  homebridge.registerAccessory('homebridge-smart-irrigation-sprinkler', 'SmartSprinklers', SmartSprinklers)
 }
 
 function SmartSprinklers (log, config) {
