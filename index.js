@@ -13,10 +13,10 @@ function minTommss(minutes){
 module.exports = function (homebridge) {
   Service = homebridge.hap.Service
   Characteristic = homebridge.hap.Characteristic
-  homebridge.registerAccessory('homebridge-smart-irrigation-sprinkler', 'SmartIrrigation', SmartIrrigation)
+  homebridge.registerAccessory('homebridge-smart-irrigation-sprinkler', 'SmartSprinklers', SmartSprinklers)
 }
 
-function SmartIrrigation (log, config) {
+function SmartSprinklers (log, config) {
   this.log = log
   this.name = config.name
   this.zones = config.zones || 6
@@ -54,7 +54,7 @@ function SmartIrrigation (log, config) {
   this.service = new Service.IrrigationSystem(this.name)
 }
 
-SmartIrrigation.prototype = {
+SmartSprinklers.prototype = {
   identify: function (callback) {
     this.log('Identify requested!')
     callback()
