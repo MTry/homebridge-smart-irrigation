@@ -1,6 +1,6 @@
 {
   "private": true,
-  "displayName": "Homebridge Smart Irrigation Sprinkler System",
+  "displayName": "Homebridge Smart Irrigation",
   "name": "homebridge-smart-irrigation-sprinkler",
   "version": "1.0.0",
   "description": "Adaptive Climate based Irrigation control of sprinklers.",
@@ -23,7 +23,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "watch": "npm link",
+    "watch": "npm run build && npm link",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -35,9 +36,7 @@
     "climate",
     "weather",
     "watering",
-    "garden",
-    "smart",
-    "valve"
+    "garden"
   ],
   "author": {
     "name": "Mayank Tandon"
