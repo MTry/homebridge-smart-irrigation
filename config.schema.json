@@ -1,147 +1,541 @@
 {
-    "pluginAlias": "SmartSprinklers",
-    "headerDisplay": "Homebridge plugin for climate based adaptive irrigation sprinkler control. Default [values][range] mentioned in description.",
-    "footerDisplay": "Created by Mayank Tandon - @mTry",
-    "pluginType": "accessory",
-    "singular": true,
-   
-    "schema": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "title": "Accessory Name:",
-          "description": "Name for the accessory [Irrigation]",
-          "type": "string",
-          "required": true,
-          "default": "Irrigation"
-        },
-        "zones": {
-          "title": "Zones:",
-          "description": "Number of Zones to expose. [6]",
-          "type": "integer",
-          "required": false,
-          "default": "6"
-        },
-        "verbosed": {
-          "title": "Verbose Calculations and Extended Climate data",
-          "description": "Enable for detailed calculation variables display.[true]",
-          "type": "boolean",
-          "required": false,
-          "default": true
-        },
-        "disableScheduling": {
-          "title": "Disable Scheduling",
-          "description": "Disable Scheduling Irrigation Cycles. [false]",
-          "type": "boolean",
-          "required": false,
-          "default": false
-        },
-        "disableAdaptiveWatering": {
-          "title": "Disable Adaptive Control",
-          "description": "Disable if you dont want climate based adaptive calculations. [false]",
-          "type": "boolean",
-          "required": false,
-          "default": false
-        },
-        "latitude": {
-          "title": "Latitude:",
-          "description": "Enter the latitude in decimals including '-' if in the southern hemisphere. [-90 - 90]",
-          "type": "number",
-          "required": true,
-          "minimum": -90,
-          "maximum": 90,
-          "default": 0.0
-        },
-        "longitude": {
-          "title": "Longitude:",
-          "description": "Enter the longitude in decimals. [-180 - 180]",
-          "type": "number",
-          "required": true,
-          "minimum": -180,
-          "maximum": 180,
-          "default": 0.0
-        },
-        "altitude": {
-          "title": "Altitude:",
-          "description": "Enter the altitude in meters. [0-10000]",
-          "type": "number",
-          "required": true,
-          "minimum": 0,
-          "maximum": 10000,
-          "default": 0.0
-        },
-        "key": {
-          "title": "API Key:",
-          "description": "Enter your OpenWeatherMap API Key.",
-          "type": "string",
-          "required": true
-        },
-        "lowThreshold": {
-          "title": "Lower Threshold Temperature:",
-          "description": "Skip scheduling when forecasted minimum temperature falls below this. [10°C][4°C - 20°C]",
-          "type": "number",
-          "required": false,
-          "minimum": 4,
-          "maximum": 20,
-          "default": 10
-        },
-        "highThreshold": {
-          "title": "High Threshold Temperature:",
-          "description": "Skip scheduling when forecasted maximum temperature stays below this. [20°C][10°C - 30°C]",
-          "type": "number",
-          "required": false,
-          "minimum": 10,
-          "maximum": 30,
-          "default": 20
-        },
-        "rainThreshold": {
-          "title": "Rain Threshold:",
-          "description": "Skip scheduling if rain forecasted above this level. [2.5mm][0mm - 100mm]",
-          "type": "number",
-          "required": false,
-          "minimum": 0,
-          "maximum": 100,
-          "default": 2.5
-        },
-        "defaultDuration": {
-          "title": "Default Watering Duration per zone:",
-          "description": "Default total watering time per zone (minutes). [20][0 - 500]",
-          "type": "number",
-          "required": false,
-          "minimum": 0,
-          "maximum": 500,
-          "default": 20
-        },
-        "maxDuration": {
-          "title": "Maximum Watering Duration per zone:",
-          "description": "Maximum limit for adaptive schedule per zone (minutes). [30][0 - 500]",
-          "type": "number",
-          "required": false,
-          "minimum": 0,
-          "maximum": 500,
-          "default": 30
-        },
-        "cycles": {
-          "title": "Cycles per zone:",
-          "description": "Number of cycles per zone (watering is spread between cycles). [2][1 - 5]",
-          "type": "number",
-          "required": false,
-          "minimum": 1,
-          "maximum": 5,
-          "default": 2
-        },
-        "sunriseOffset": {
-          "title": "Sunrise Offest:",
-          "description": "Minutes before the sunrise watering should get over by.",
-          "type": "number",
-          "required": false,
-          "minimum": -1440,
-          "maximum": 1440,
-          "default": 0
-        }          
-      }
+  "pluginAlias": "SmartSprinklers",
+  "headerDisplay": "Homebridge plugin for climate based adaptive irrigation sprinkler control. Default [values][range] mentioned in description.",
+  "footerDisplay": "Created by Mayank Tandon - @mTry",
+  "pluginType": "accessory",
+  "singular": true,
+ 
+"schema": {
+  "type": "object",
+  "properties": {
+    "accessory": {
+        "default": "SmartSprinklers",
+        "type": "string"
     },
-    "nonDefaultFormItems": [],
-    "customFormItems": {
+    "name": {
+        "title": "Accessory Name:",
+        "description": "Name for the accessory [Irrigation]",
+        "type": "string",
+        "required": true,
+        "default": "Irrigation"
+      },
+    "verbosed": {
+    "title": "Verbose Calculations and Extended Climate data",
+    "description": "Enable for detailed calculation variables display.[true]",
+    "type": "boolean",
+    "required": false,
+    "default": true
+    },
+    "latitude": {
+    "title": "Latitude:",
+    "description": "Enter the latitude in decimals including '-' if in the southern hemisphere. [-90 - 90]",
+    "type": "number",
+    "required": true,
+    "minimum": -90,
+    "maximum": 90,
+    "default": 0.0
+    },
+    "longitude": {
+    "title": "Longitude:",
+    "description": "Enter the longitude in decimals. [-180 - 180]",
+    "type": "number",
+    "required": true,
+    "minimum": -180,
+    "maximum": 180,
+    "default": 0.0
+    },
+    "altitude": {
+    "title": "Altitude:",
+    "description": "Enter the altitude in meters. [0-10000m]",
+    "type": "number",
+    "required": true,
+    "minimum": 0,
+    "maximum": 10000,
+    "default": 0.0
+    },
+    "keyAPI": {
+    "title": "API Key:",
+    "description": "Enter your OpenWeatherMap API Key.",
+    "type": "string",
+    "required": true
+    },
+    "cycles": {
+    "title": "Cycles per zone:",
+    "description": "Number of cycles per zone (watering is spread between cycles). [2][1 - 5]",
+    "type": "number",
+    "required": false,
+    "minimum": 1,
+    "maximum": 5,
+    "default": 2
+    },
+    "sunriseOffset": {
+    "title": "Sunrise Offest:",
+    "description": "Minutes before the sunrise watering should get over by.",
+    "type": "number",
+    "required": false,
+    "minimum": -1440,
+    "maximum": 1440,
+    "default": 0
+    },        
+   "lowThreshold": {
+    "title": "Low Threshold Temperature:",
+    "description": "Skip scheduling when forecasted minimum temperature falls below this. [10°C][4°C - 20°C]",
+    "type": "number",
+    "required": false,
+    "minimum": 4,
+    "maximum": 20,
+    "default": 10
+    },
+    "highThreshold": {
+    "title": "High Threshold Temperature:",
+    "description": "Skip scheduling when forecasted maximum temperature stays below this. [20°C][10°C - 30°C]",
+    "type": "number",
+    "required": false,
+    "minimum": 10,
+    "maximum": 30,
+    "default": 20
+    },
+
+    "JanRad": {"type": "number", "title": "January", "default":6},
+    "FebRad": {"type": "number", "title": "February", "default":6},
+    "MarRad": {"type": "number", "title": "March", "default":6},
+    "AprRad": {"type": "number", "title": "April", "default":6},
+    "MayRad": {"type": "number", "title": "May", "default":6},
+    "JunRad": {"type": "number", "title": "June", "default":6},
+    "JulRad": {"type": "number", "title": "July", "default":6},
+    "AugRad": {"type": "number", "title": "August", "default":6},
+    "SepRad": {"type": "number", "title": "September", "default":6},
+    "OctRad": {"type": "number", "title": "October", "default":6},
+    "NovRad": {"type": "number", "title": "November", "default":6},
+    "DecRad": {"type": "number", "title": "December", "default":6},
+
+    
+    "zones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "zoneName": {
+            "title": "Zone Name",
+            "type": "string",
+            "maxLength": 16
+          },
+          "enabled": {
+            "title": "Zone Enable",
+            "type": "boolean",
+            "description": "Enable Zone",
+            "default": true
+          },
+          "adaptive": {
+            "title": "Adaptive",
+            "type": "boolean",
+            "description": "Climate Adaptive Zone",
+            "default": true
+          },
+          "rainFactoring": {
+            "title": "Rain Factor",
+            "type": "boolean",
+            "description": "Factor rain threshold",
+            "default": true
+          },
+          "defDuration": {
+            "title": "Default Time",
+            "type": "number",
+            "description": "Default zone duration in minutes",
+            "default": 20
+          },
+          "maxDuration": {
+            "title": "Max Time",
+            "type": "number",
+            "description": "Maximum duration settable in minutes",
+            "default": 30
+          },
+          "rainThreshold": {
+            "title": "Rain Threshold",
+            "type": "number",
+            "description": "Rain Threshold",
+            "default": 2.5
+          },
+          "tweakFactor": {
+            "title": "Tweak Factor",
+            "type": "number",
+            "description": "Tweak adaptive results in %",
+            "default": 100
+          },
+          "dripLPH": {
+            "title": "Drip LPH",
+            "type": "number",
+            "description": "Drip emmiter LPH",
+            "default": 2
+          },
+          "dripNos": {
+            "title": "Drip Nos",
+            "type": "number",
+            "description": "Number of drip emmiters",
+            "default": 1
+          },
+          "dripArea": {
+            "title": "Drip Area",
+            "type": "number",
+            "description": "Irrigation Area sq. meters",
+            "default": 1
+          },
+          "efficiency": {
+            "title": "Drip Efficiency",
+            "type": "number",
+            "description": "Irrigation Efficiency %",
+            "default": 100
+          },
+          "wateringDays": {
+            "type": "array",
+            "title": "Watering Days",
+            "items": {
+              "type": "number",
+              "title": "Watering Days"
+              },
+              "default":[0,1,2,3,4,5,6]
+          },
+          "wateringMonths": {
+            "type": "array",
+            "title": "Watering Months",
+            "items": {
+              "type": "number",
+              "title": "Watering Months"
+              },
+          "default":[0,1,2,3,4,5,6,7,8,9,10,11]
+          }
+        },
+        "required": [ "zoneName" ]
+      }
     }
   }
+},
+
+"form": [
+  {
+    "type": "help",
+    "helpvalue": "<div class=\"alert alert-info\">Homebridge Smart Irrigation Sprinklers</div>"
+  },
+  {
+    "key": "name",
+    "type": "text"
+  },
+  
+  {
+    "type": "section",
+    "title": "Primary Setup",
+    "expandable": true,
+    "expanded": false,
+    "htmlClass": "row",
+    "items": [
+      {
+        "type": "section",
+        "htmlClass": "col-xs-4",
+        "items": [
+          "verbosed"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-4",
+        "items": [
+          "cycles"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-4",
+        "items": [
+          "sunriseOffset"
+        ]
+      },
+
+      {
+        "type": "section",
+        "htmlClass": "col-xs-6",
+        "items": [
+          "lowThreshold"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-6",
+        "items": [
+          "highThreshold"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-12",
+        "items": ["keyAPI"]
+      },
+
+      {
+        "type": "section",
+        "htmlClass": "col-xs-4",
+        "items": [
+          "latitude"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-4",
+        "items": [
+          "longitude"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-4",
+        "items": [
+          "altitude"
+        ]
+      }
+    ]
+  },
+
+  {
+    "type": "section",
+    "title": "Mean Monthly Solar Radiiation Data",
+    "expandable": true,
+    "expanded": false,
+    "htmlClass": "row",
+    "items": [
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "JanRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "FebRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "MarRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "AprRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "MayRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "JunRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "JulRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "AugRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "SepRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "OctRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "NovRad"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-2",
+        "items": [
+          "DecRad"
+        ]
+      }
+    ]
+  },
+  {
+  "key": "zones",
+  "type": "tabarray",
+  "maxItems": 8,
+  "add": "New",
+  "remove": "Delete",
+  "style": { "remove": "btn-danger" },
+  "title": "{{ value.zoneName || 'Zone ' + $index }}",
+  "items": [
+
+  {
+    "type": "section",
+    "title": "{{ value.zoneName || 'Zone ' + $index + ' Setup'}}",
+    "expandable": true,
+    "expanded": false,
+    "htmlClass": "row",
+    "items": [
+      {
+        "type": "section",
+        "htmlClass": "col-xs-3",
+        "items": [
+          "zones[].zoneName"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-3",
+        "items": [
+          "zones[].enabled"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-3",
+        "items": [
+          "zones[].adaptive"
+        ]
+      },
+      {
+        "type": "section",
+        "htmlClass": "col-xs-3",
+        "items": [
+          "zones[].rainFactoring"
+        ]
+      }
+      ,
+      {
+        "type": "section",
+        "htmlClass": "row",
+        "items": [
+          {
+            "type": "section",
+            "htmlClass": "col-xs-3",
+            "items": [
+              "zones[].defDuration"
+            ]
+          },
+          {
+            "type": "section",
+            "htmlClass": "col-xs-3",
+            "items": [
+              "zones[].maxDuration"
+            ]
+          },
+          {
+            "type": "section",
+            "htmlClass": "col-xs-3",
+            "items": [
+              "zones[].rainThreshold"
+            ]
+          },
+          {
+            "type": "section",
+            "htmlClass": "col-xs-3",
+            "items": [
+              "zones[].tweakFactor"
+            ]
+          }
+        ]
+      }
+      ,
+      {
+        "type": "section",
+        "htmlClass": "row",
+        "items": [
+          {
+            "type": "section",
+            "htmlClass": "col-xs-3",
+            "items": [
+              "zones[].dripLPH"
+            ]
+          },
+          {
+            "type": "section",
+            "htmlClass": "col-xs-3",
+            "items": [
+              "zones[].dripNos"
+            ]
+          },
+          {
+            "type": "section",
+            "htmlClass": "col-xs-3",
+            "items": [
+              "zones[].dripArea"
+            ]
+          },
+          {
+            "type": "section",
+            "htmlClass": "col-xs-3",
+            "items": [
+              "zones[].efficiency"
+            ]
+          }
+        ]
+      },
+      {"key": "zones[].wateringDays",
+       "inline": true,
+       "type":"checkboxes",
+       "titleMap": {
+          "0": "Sunday",
+          "1": "Monday",
+          "2": "Tuesday",
+          "3": "Wednesday",
+          "4": "Thursday",
+          "5": "Friday",
+          "6": "Saturday"
+          }
+      },
+      {"key": "zones[].wateringMonths",
+       "inline": true,
+       "type":"checkboxes",
+       "titleMap": {
+          "0": "Jan",
+          "1": "Feb",
+          "2": "Mar",
+          "3": "Apr",
+          "4": "May",
+          "5": "Jun",
+          "6": "Jul",
+          "7": "Aug",
+          "8": "Sep",
+          "9": "Oct",
+          "10": "Nov",
+          "11": "Dec"
+          }
+      }
+    ]
+  }
+  ]
+}
+]
+}
