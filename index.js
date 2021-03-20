@@ -393,17 +393,11 @@ SmartSprinklers.prototype = {
                  {
                    WaterNeeded = ETo_tillNext - Rain_tillNext
                    if (WaterNeeded < 0) {WaterNeeded = 0}
-                   this.log('------------------------------------------------')
-                   this.log('Day %s Water : %s zone %s', zDay,WaterNeeded,Z_index)
-                   this.log('------------------------------------------------')
                  } else {WaterNeeded = ETo_tillNext}
                  WaterNeeded = (WaterNeeded * this.zones[Z_index].cropCoef * this.zones[Z_index].plantDensity * this.zones[Z_index].expFactor * this.zones[Z_index].dripArea * this.zones[Z_index].tweakFactor) / this.zones[Z_index].efficiency
                  zoneTimes[zDay][Z_index] = WaterNeeded * 60 / (this.zones[Z_index].dripLPH * this.zones[Z_index].dripNos)
                  if (this.zones[Z_index].maxDuration <= zoneTimes[zDay][Z_index])
                  {zoneTimes[zDay][Z_index] = this.zones[Z_index].maxDuration}
-                 this.log('------------------------------------------------')
-                 this.log('Day %s Water : %s zone %s', zDay,WaterNeeded,Z_index)
-                 this.log('------------------------------------------------')
               }
             } 
             else 
@@ -416,6 +410,7 @@ SmartSprinklers.prototype = {
           this.log('Day %s Check times: %s', zDay, zoneTimes[zDay])
           this.log('------------------------------------------------')
           this.log('Day %s Check total time: %s', zDay, wateringTime[zDay])
+          this.log('------------------------------------------------')
         }
 
         var maximumTotal
@@ -433,7 +428,7 @@ SmartSprinklers.prototype = {
           waterDay = tomorrow
         }
 
-    if (!this.restrictedDays.includes(waterDay.sunrise.getDay()) && !this.restrictedMonths.includes(waterDay.sunrise.getMonth()) && today.rain < this.rainThreshold && tomorrow.rain < this.rainThreshold && waterDay.min > this.lowThreshold && waterDay.max > this.highThreshold) 
+    if (today.rain < this.rainThreshold && tomorrow.rain < this.rainThreshold && waterDay.min > this.lowThreshold && waterDay.max > this.highThreshold) 
     {
           var zoneMaxDuration = this.defaultDuration
           if (!this.disableAdaptiveWatering) {
@@ -445,35 +440,9 @@ SmartSprinklers.prototype = {
           }
 
     var Weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
-  
-    switch (waterDay.sunrise.getDay()) {
-      case 0:
-    this.zonePercentages = this.Sunday
-        break
-      case 1:
-    this.zonePercentages = this.Monday
-        break
-      case 2:
-    this.zonePercentages = this.Tuesday
-        break
-      case 3:
-    this.zonePercentages = this.Wednesday
-        break
-      case 4:
-    this.zonePercentages = this.Thursday
-        break
-      case 5:
-    this.zonePercentages = this.Friday
-        break
-      case 6:
-    this.zonePercentages = this.Saturday
-    }
 
     for (var zone = 1; zone <= this.zoned; zone++) {
-      this.zoneDuration[zone] = ((zoneMaxDuration / this.cycles) / 100) * this.zonePercentages[zone - 1]
-	    if (this.zoneDuration[zone] > (this.maxDuration / this.cycles)) {
-	    this.zoneDuration[zone] = this.maxDuration / this.cycles
-		  }
+      this.zoneDuration[zone] = zoneMaxDuration / this.cycles
     }
 
           var totalTime = this.zoneDuration.reduce((a, b) => a + b, 0) * this.cycles
