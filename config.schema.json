@@ -26,6 +26,13 @@
       "required": false,
       "default": true
       },
+      "masterDisable": {
+      "title": "Disable scheduling",
+      "description": "Disable scheduling all irrigation.[false]",
+      "type": "boolean",
+      "required": false,
+      "default": false
+      },
       "latitude": {
       "title": "Latitude:",
       "description": "Enter the latitude in decimals including '-' if in the southern hemisphere. [-90 - 90]",
@@ -257,6 +264,13 @@
           "type": "section",
           "htmlClass": "col-xs-4",
           "items": [
+            "masterDisable"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
             "cycles"
           ]
         },
@@ -270,14 +284,14 @@
 
         {
           "type": "section",
-          "htmlClass": "col-xs-6",
+          "htmlClass": "col-xs-4",
           "items": [
             "lowThreshold"
           ]
         },
         {
           "type": "section",
-          "htmlClass": "col-xs-6",
+          "htmlClass": "col-xs-4",
           "items": [
             "highThreshold"
           ]
