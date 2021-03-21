@@ -96,105 +96,21 @@ SmartSprinklers.prototype = {
         var SolarRad = [this.JanRad,this.FebRad,this.MarRad,this.AprRad,this.MayRad,this.JunRad,this.JulRad,this.AugRad,this.SepRad,this.OctRad,this.NovRad,this.DecRad]
         var Weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
         var Months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-        var forecast = [
-          {
-          summary: json.daily[0].weather[0].description,
-          sunrise: new Date(json.daily[0].sunrise * 1000),
-          min: json.daily[0].temp.min,
-          max: json.daily[0].temp.max,
-          humidity: json.daily[0].humidity,
-          pressure: json.daily[0].pressure,
-          speed: json.daily[0].wind_speed,
-          rain: ('rain' in json.daily[0]) ? json.daily[0].rain : 0,
-          clouds: json.daily[0].clouds,
-          ETO: 0
-          },
-          {
-          summary: json.daily[1].weather[0].description,
-          sunrise: new Date(json.daily[1].sunrise * 1000),
-          min: json.daily[1].temp.min,
-          max: json.daily[1].temp.max,
-          humidity: json.daily[1].humidity,
-          pressure: json.daily[1].pressure,
-          speed: json.daily[1].wind_speed,
-          rain: ('rain' in json.daily[1]) ? json.daily[1].rain : 0,
-          clouds: json.daily[1].clouds,
-          ETO: 0
-          },
-          {
-          summary: json.daily[2].weather[0].description,
-          sunrise: new Date(json.daily[2].sunrise * 1000),
-          min: json.daily[2].temp.min,
-          max: json.daily[2].temp.max,
-          humidity: json.daily[2].humidity,
-          pressure: json.daily[2].pressure,
-          speed: json.daily[2].wind_speed,
-          rain: ('rain' in json.daily[2]) ? json.daily[2].rain : 0,
-          clouds: json.daily[2].clouds,
-          ETO: 0
-          },
-          {
-          summary: json.daily[3].weather[0].description,
-          sunrise: new Date(json.daily[3].sunrise * 1000),
-          min: json.daily[3].temp.min,
-          max: json.daily[3].temp.max,
-          humidity: json.daily[3].humidity,
-          pressure: json.daily[3].pressure,
-          speed: json.daily[3].wind_speed,
-          rain: ('rain' in json.daily[3]) ? json.daily[3].rain : 0,
-          clouds: json.daily[3].clouds,
-          ETO: 0
-          },
-          {
-          summary: json.daily[4].weather[0].description,
-          sunrise: new Date(json.daily[4].sunrise * 1000),
-          min: json.daily[4].temp.min,
-          max: json.daily[4].temp.max,
-          humidity: json.daily[4].humidity,
-          pressure: json.daily[4].pressure,
-          speed: json.daily[4].wind_speed,
-          rain: ('rain' in json.daily[4]) ? json.daily[4].rain : 0,
-          clouds: json.daily[4].clouds,
-          ETO: 0
-          },
-          {
-          summary: json.daily[5].weather[0].description,
-          sunrise: new Date(json.daily[5].sunrise * 1000),
-          min: json.daily[5].temp.min,
-          max: json.daily[5].temp.max,
-          humidity: json.daily[5].humidity,
-          pressure: json.daily[5].pressure,
-          speed: json.daily[5].wind_speed,
-          rain: ('rain' in json.daily[5]) ? json.daily[5].rain : 0,
-          clouds: json.daily[5].clouds,
-          ETO: 0
-          },
-          {
-          summary: json.daily[6].weather[0].description,
-          sunrise: new Date(json.daily[6].sunrise * 1000),
-          min: json.daily[6].temp.min,
-          max: json.daily[6].temp.max,
-          humidity: json.daily[6].humidity,
-          pressure: json.daily[6].pressure,
-          speed: json.daily[6].wind_speed,
-          rain: ('rain' in json.daily[6]) ? json.daily[6].rain : 0,
-          clouds: json.daily[6].clouds,
-          ETO: 0
-          },
-          {
-          summary: json.daily[7].weather[0].description,
-          sunrise: new Date(json.daily[7].sunrise * 1000),
-          min: json.daily[7].temp.min,
-          max: json.daily[7].temp.max,
-          humidity: json.daily[7].humidity,
-          pressure: json.daily[7].pressure,
-          speed: json.daily[7].wind_speed,
-          rain: ('rain' in json.daily[7]) ? json.daily[7].rain : 0,
-          clouds: json.daily[7].clouds,
-          ETO: 0
-          }
-        ] 
-       
+        
+        var forecast = [{},{},{},{},{},{},{},{}]
+        for (var pop = 0; pop <= 7; pop++){
+          forecast[pop].summary = json.daily[pop].weather[0].description,
+          forecast[pop].sunrise = new Date(json.daily[pop].sunrise * 1000),
+          forecast[pop].min = json.daily[pop].temp.min,
+          forecast[pop].max = json.daily[pop].temp.max,
+          forecast[pop].humidity = json.daily[pop].humidity,
+          forecast[pop].pressure = json.daily[pop].pressure,
+          forecast[pop].speed = json.daily[pop].wind_speed,
+          forecast[pop].rain = ('rain' in json.daily[pop]) ? json.daily[pop].rain : 0,
+          forecast[pop].clouds = json.daily[pop].clouds,
+          forecast[pop].ETO = 0
+        }
+        
         var EToDay = forecast[0]
         var alt = this.altitude
         var lat = this.latitude
@@ -326,7 +242,7 @@ SmartSprinklers.prototype = {
             if (this.zoneDuration[zone] != 0){
               this.log('%s | %s minutes | %sx %s minute cycles', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles), this.cycles, minTommss(this.zoneDuration[zone]))
             } else {
-              this.log('%s | %s minutes | X NO WATERING X', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles))  
+              this.log('%s | %s minutes | X--> NO WATERING <--X', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles))  
             }
           }
 
