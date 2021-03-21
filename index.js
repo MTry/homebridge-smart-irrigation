@@ -156,13 +156,6 @@ SmartSprinklers.prototype = {
           this.log('-----------------------------------------------------')
           this.log('%s on %s %s with %s% clouds & %s% RH', forecast[dd].summary, Weekday[forecast[dd].sunrise.getDay()], forecast[dd].sunrise.toLocaleDateString(), forecast[dd].clouds, forecast[dd].humidity)
           this.log('ETo:%smm|Rain:%smm|Min:%s°C|Max:%s°C|Wind:%sm/s', forecast[dd].ETO.toFixed(2), forecast[dd].rain, forecast[dd].min, forecast[dd].max, forecast[dd].speed)
-
-          if (this.verbosed){
-          this.log('----------------------%s-----------------------------',dd)
-          this.log('Variable Check: %s', forecast[dd])
-          this.log('Variable Check: %s', forecast[dd].ETO)
-          this.log('-----------------------------------------------------')
-          }
          }
 
          var WaterNeeded = 0
@@ -194,6 +187,7 @@ SmartSprinklers.prototype = {
                  {
                    WaterNeeded = ETo_tillNext - Rain_tillNext
                    if (WaterNeeded < 0) {WaterNeeded = 0}
+                   if (this.zones[Z_index].rainThreshold > forecast[zDay].rain) {WaterNeeded = 0}
                  } else {WaterNeeded = ETo_tillNext}
                  WaterNeeded = (WaterNeeded * this.zones[Z_index].cropCoef * this.zones[Z_index].plantDensity * this.zones[Z_index].expFactor * this.zones[Z_index].dripArea * this.zones[Z_index].tweakFactor) / this.zones[Z_index].efficiency
                  zoneTimes[zDay][Z_index] = WaterNeeded * 60 / (this.zones[Z_index].dripLPH * this.zones[Z_index].dripNos)
@@ -224,11 +218,11 @@ SmartSprinklers.prototype = {
           zDay = 1
         }
 
-    if (!this.masterDisable && this.highThreshold < forecast[zDay].max && this.lowThreshold < forecast[zDay].min) 
-    {
-      for (var zone = 1; zone <= this.zoned; zone++) {
-      this.zoneDuration[zone] = zoneTimes[zDay][zone-1] / this.cycles
-      }
+        if (!this.masterDisable && this.highThreshold < forecast[zDay].max && this.lowThreshold < forecast[zDay].min) 
+        {
+          for (var zone = 1; zone <= this.zoned; zone++) {
+          this.zoneDuration[zone] = zoneTimes[zDay][zone-1] / this.cycles
+          }
           
           var startTime = new Date(forecast[zDay].sunrise.getTime() - (wateringTime[zDay] + this.sunriseOffset) * 60000)
           var finishTime = new Date(startTime.getTime() + wateringTime[zDay] * 60000)
@@ -264,8 +258,6 @@ SmartSprinklers.prototype = {
       }
     }.bind(this))
   },
-
-  
 
   _wateringCycle: function (zone, cycle) {
     if (this.zoneDuration[zone] != 0) {this.valveAccessory[zone].setCharacteristic(Characteristic.Active, 1)}
