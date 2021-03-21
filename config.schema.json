@@ -211,23 +211,23 @@
               "description": "Exposure Factor",
               "default": 1
             },
-            "wateringDays": {
-              "type": "array",
-              "title": "Watering Days",
-              "items": {
-                "type": "number",
-                "title": "Watering Days"
-                },
-                "default":[0,1,2,3,4,5,6]
-            },
             "wateringMonths": {
               "type": "array",
               "title": "Watering Months",
               "items": {
-                "type": "number",
+                "type": "string",
                 "title": "Watering Months"
                 },
-            "default":[0,1,2,3,4,5,6,7,8,9,10,11]
+            "default":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+            },
+              "wateringWeekdays": {
+              "type": "array",
+              "title": "Watering Weekdays",
+              "items": {
+                "type": "string",
+                "title": "Watering Days"
+                },
+                "default":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
             }
           },
           "required": [ "zoneName" ]
@@ -561,35 +561,35 @@
             }
           ]
         },
-        {"key": "zones[].wateringDays",
+        {"key": "zones[].wateringWeekdays",
          "inline": true,
          "type":"checkboxes",
          "titleMap": {
-            "0": "Sunday",
-            "1": "Monday",
-            "2": "Tuesday",
-            "3": "Wednesday",
-            "4": "Thursday",
-            "5": "Friday",
-            "6": "Saturday"
+            "Sunday": "Sunday",
+            "Monday": "Monday",
+            "Tuesday": "Tuesday",
+            "Wednesday": "Wednesday",
+            "Thursday": "Thursday",
+            "Friday": "Friday",
+            "Saturday": "Saturday"
             }
         },
         {"key": "zones[].wateringMonths",
          "inline": true,
          "type":"checkboxes",
          "titleMap": {
-            "0": "Jan",
-            "1": "Feb",
-            "2": "Mar",
-            "3": "Apr",
-            "4": "May",
-            "5": "Jun",
-            "6": "Jul",
-            "7": "Aug",
-            "8": "Sep",
-            "9": "Oct",
-            "10": "Nov",
-            "11": "Dec"
+            "Jan": "Jan",
+            "Feb": "Feb",
+            "Mar": "Mar",
+            "Apr": "Apr",
+            "May": "May",
+            "Jun": "Jun",
+            "Jul": "Jul",
+            "Aug": "Aug",
+            "Sep": "Sep",
+            "Oct": "Oct",
+            "Nov": "Nov",
+            "Dec": "Dec"
             }
         }
       ]

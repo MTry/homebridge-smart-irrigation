@@ -28,7 +28,8 @@ function SmartSprinklers (log, config) {
   this.verbosed = config.verbosed
   this.masterDisable = config.masterDisable
   this.sunriseOffset = config.sunriseOffset || 0
-
+  this.lowThreshold = config.lowThreshold
+  this.highThreshold = config.highThreshold
   this.cycles = config.cycles || 2
   this.JanRad = config.JanRad
   this.FebRad = config.FebRad
@@ -93,7 +94,8 @@ SmartSprinklers.prototype = {
         }
 
         var SolarRad = [this.JanRad,this.FebRad,this.MarRad,this.AprRad,this.MayRad,this.JunRad,this.JulRad,this.AugRad,this.SepRad,this.OctRad,this.NovRad,this.DecRad]
-        
+        var Weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+        var Months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
         var forecast = [
           {
           summary: json.daily[0].weather[0].description,
@@ -235,11 +237,15 @@ SmartSprinklers.prototype = {
 
         for (var dd = 0; dd <= 7; dd++) {
           forecast[dd].ETO = CalcETO(forecast[dd])
+          this.log('-----------------------------------------------------')
+          this.log('%s on %s %s with %s% clouds & %s% RH', forecast[dd].summary, Weekday[forecast[dd].sunrise.getDay()], forecast[dd].sunrise.toLocaleDateString(), forecast[dd].clouds, forecast[dd].humidity)
+          this.log('ETo:%smm|Rain:%smm|Min:%s°C|Max:%s°C|Wind:%sm/s', forecast[dd].ETO.toFixed(2), forecast[dd].rain, forecast[dd].min, forecast[dd].max, forecast[dd].speed)
+
           if (this.verbosed){
-          this.log('----------------------%s--------------------------',dd)
+          this.log('----------------------%s-----------------------------',dd)
           this.log('Variable Check: %s', forecast[dd])
           this.log('Variable Check: %s', forecast[dd].ETO)
-          this.log('------------------------------------------------')
+          this.log('-----------------------------------------------------')
           }
          }
 
@@ -250,7 +256,7 @@ SmartSprinklers.prototype = {
 
          for (zDay = 0; zDay <= 1; zDay++){
           for (Z_index =0; Z_index <= this.zoned-1; Z_index++) {
-            if (this.zones[Z_index].enabled && this.zones[Z_index].wateringDays.includes(forecast[zDay].sunrise.getDay()) && this.zones[Z_index].wateringMonths.includes(forecast[zDay].sunrise.getMonth()))
+            if (this.zones[Z_index].enabled && this.zones[Z_index].wateringWeekdays.includes(Weekday[forecast[zDay].sunrise.getDay()]) && this.zones[Z_index].wateringMonths.includes(Months[forecast[zDay].sunrise.getMonth()]))
             { if (!this.zones[Z_index].adaptive) 
               {
                 zoneTimes[zDay][Z_index] = this.zones[Z_index].defDuration
@@ -258,8 +264,8 @@ SmartSprinklers.prototype = {
               else 
               {
                 for (var N_days = 1; N_days <= 7; N_days++ ) {
-                  var temp = forecast[N_days+zDay].sunrise.getDay()
-                  if (this.zones[Z_index].wateringDays.includes(temp)) break
+                  var temp = Weekday[forecast[N_days+zDay].sunrise.getDay()]
+                  if (this.zones[Z_index].wateringWeekdays.includes(temp)) break
                  }
                  var ETo_tillNext = 0
                  var Rain_tillNext = 0
@@ -302,17 +308,15 @@ SmartSprinklers.prototype = {
           zDay = 1
         }
 
-    if (!this.masterDisable) 
+    if (!this.masterDisable && this.highThreshold < forecast[zDay].max && this.lowThreshold < forecast[zDay].min) 
     {
-
-    var Weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
-
-    for (var zone = 1; zone <= this.zoned; zone++) {
+      for (var zone = 1; zone <= this.zoned; zone++) {
       this.zoneDuration[zone] = zoneTimes[zDay][zone-1] / this.cycles
-    }
+      }
           
           var startTime = new Date(forecast[zDay].sunrise.getTime() - (wateringTime[zDay] + this.sunriseOffset) * 60000)
           var finishTime = new Date(startTime.getTime() + wateringTime[zDay] * 60000)
+          this.log('------------------------------------------------')
           this.log('Watering starts: %s', Weekday[startTime.getDay()], startTime.toLocaleString())
           this.log('Watering finishes: %s', Weekday[finishTime.getDay()], finishTime.toLocaleString())
           this.log('Total watering time: %s minutes', minTommss(wateringTime[zDay]))
@@ -322,7 +326,7 @@ SmartSprinklers.prototype = {
             if (this.zoneDuration[zone] != 0){
               this.log('%s | %s minutes | %sx %s minute cycles', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles), this.cycles, minTommss(this.zoneDuration[zone]))
             } else {
-              this.log('%s | %s minutes | No cycles', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles))  
+              this.log('%s | %s minutes | X NO WATERING X', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles))  
             }
           }
 
@@ -332,6 +336,7 @@ SmartSprinklers.prototype = {
           }.bind(this))
           this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(1)
         } else {
+          this.log('------------------------------------------------')
           this.log('No schedule set, recalculation: %s', forecast[zDay].sunrise.toLocaleString())
           this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(0)
           schedule.scheduleJob(forecast[zDay].sunrise, function () {
