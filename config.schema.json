@@ -21,7 +21,7 @@
         },
       "verbosed": {
       "title": "Verbose Calculations and Extended Climate data",
-      "description": "Enable for detailed calculation variables display. [true]",
+      "description": "Enable for more detailed calculation variables display. [true]",
       "type": "boolean",
       "required": false,
       "default": true
