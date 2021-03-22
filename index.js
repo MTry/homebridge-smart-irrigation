@@ -27,6 +27,7 @@ function SmartSprinklers (log, config) {
   this.keyAPI = config.keyAPI
   this.verbosed = config.verbosed
   this.masterDisable = config.masterDisable
+  this.recheckTime = config.recheckTime || 0
   this.sunriseOffset = config.sunriseOffset || 0
   this.lowThreshold = config.lowThreshold
   this.highThreshold = config.highThreshold
@@ -239,7 +240,14 @@ SmartSprinklers.prototype = {
               this.log('%s | %s minutes | X--> NO WATERING <--X', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles))  
             }
           }
-
+          var recheck = new Date(startTime-(this.recheckTime*60000))
+          if ((recheck > Date.now()) && ((recheck-(30*60000)) > Date.now()) && (this.recheckTime != 0)) {
+            schedule.scheduleJob(recheck, function () {
+              this._calculateSchedule(function () {})
+            }.bind(this))
+            this.log('Reassessment: %s %s', Weekday[recheck.getDay()], recheck.toLocaleString())
+          } else {this.log('No further reassessment before run!')}
+          
           schedule.scheduleJob(startTime, function () {
             this.log('Starting water cycle 1/%s', this.cycles)
             this._wateringCycle(1, 1)

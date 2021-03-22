@@ -33,6 +33,13 @@
       "required": false,
       "default": false
       },
+        "recheckTime": {
+        "title": "Recheck Time",
+        "description": "Reassess - minutes before runtime.[None]",
+        "type": "number",
+        "default": 0,
+        "enum": [15, 30, 60 ]
+      },
       "latitude": {
       "title": "Latitude:",
       "description": "Enter the latitude in decimals including '-' if in the southern hemisphere. [-90 - 90]",
@@ -283,16 +290,26 @@
             "masterDisable"
           ]
         },
+        { 
+          "htmlClass": "col-xs-3",
+            "key": "recheckTime",
+            "type": "select",
+            "titleMap": [
+            { "value": 15, "name": "15 Minutes" },
+            { "value": 30, "name": "30 Minutes" },
+            { "value": 60, "name": "60 Minutes" }
+            ]
+        },
         {
           "type": "section",
-          "htmlClass": "col-xs-4",
+          "htmlClass": "col-xs-3",
           "items": [
             "cycles"
           ]
         },
         {
           "type": "section",
-          "htmlClass": "col-xs-4",
+          "htmlClass": "col-xs-3",
           "items": [
             "sunriseOffset"
           ]
@@ -300,14 +317,14 @@
 
         {
           "type": "section",
-          "htmlClass": "col-xs-4",
+          "htmlClass": "col-xs-3",
           "items": [
             "lowThreshold"
           ]
         },
         {
           "type": "section",
-          "htmlClass": "col-xs-4",
+          "htmlClass": "col-xs-3",
           "items": [
             "highThreshold"
           ]
