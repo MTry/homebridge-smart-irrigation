@@ -3,6 +3,8 @@ var Service, Characteristic
 const packageJson = require('./package.json')
 const schedule = require('node-schedule')
 const request = require('request')
+const nodemailer = require("nodemailer")
+
 
 function minTommss(minutes){
  var sign = minutes < 0 ? "-" : "";
