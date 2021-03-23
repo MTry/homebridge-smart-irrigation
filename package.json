@@ -36,7 +36,9 @@
     "climate",
     "weather",
     "watering",
-    "garden"
+    "garden",
+    "valve",
+    "control"
   ],
   "author": {
     "name": "Mayank Tandon"

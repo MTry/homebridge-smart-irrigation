@@ -1,3 +1,4 @@
+'use strict'
 var Service, Characteristic
 const packageJson = require('./package.json')
 const schedule = require('node-schedule')
@@ -164,8 +165,8 @@ SmartSprinklers.prototype = {
          var Today_ZonesDuration = new Array(this.zoned).fill(0)
          var zoneTimes = [Today_ZonesDuration,Today_ZonesDuration]
 
-         for (zDay = 0; zDay <= 1; zDay++){
-          for (Z_index =0; Z_index <= this.zoned-1; Z_index++) {
+         for (var zDay = 0; zDay <= 1; zDay++){
+          for ( var Z_index =0; Z_index <= this.zoned-1; Z_index++) {
             if (this.zones[Z_index].enabled && this.zones[Z_index].wateringWeekdays.includes(Weekday[forecast[zDay].sunrise.getDay()]) && this.zones[Z_index].wateringMonths.includes(Months[forecast[zDay].sunrise.getMonth()]))
             { if (!this.zones[Z_index].adaptive) 
               {
