@@ -247,13 +247,6 @@ SmartSprinklers.prototype = {
             }
           }
           wateringTime[zDay] = zoneTimes[zDay].reduce((a, b) => a + b, 0)
-          //if (this.verbosed) {
-          //this.log('------------------------------------------------')
-          //this.log('Day %s Zone times: %s', zDay, zoneTimes[zDay])
-          //this.log('------------------------------------------------')
-          //this.log('Day %s Total time: %s', zDay, wateringTime[zDay])
-          //this.log('------------------------------------------------')
-          //}
         }
 
         zDay = 0

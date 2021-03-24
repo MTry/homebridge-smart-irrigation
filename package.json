@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/MTry/homebridge-smart-irrigation/issues"
   },
-  "homepage": "https://github.com/MTry/homebridge-smart-irrigation/issues#readme",
+  "homepage": "https://github.com/MTry/homebridge-smart-irrigation#readme",
 
   "engines": {
     "homebridge": ">=0.4.50",
@@ -23,8 +23,6 @@
   },
   "main": "index.js",
   "scripts": {
-    "watch": "npm run build && npm link",
-    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -43,7 +41,7 @@
   "author": {
     "name": "Mayank Tandon"
   },
-
+  
   "dependencies": {
     "node-schedule": ">=1.3.2",
     "request": ">=2.88.0",
