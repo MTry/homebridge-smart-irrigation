@@ -5,6 +5,17 @@ const schedule = require('node-schedule')
 const request = require('request')
 const nodemailer = require("nodemailer")
 
+async function sendEmail(transport,matter)
+  {
+  let transporter = nodemailer.createTransport(transport)
+  let info = await transporter.sendMail(matter)
+  console.log("Message sent: %s", info.messageId)
+  //console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info))
+  }
+
+var mailTransport = {}
+var mailContruct = {}
+var wateringDone = false
 
 function minTommss(minutes){
  var sign = minutes < 0 ? "-" : "";
@@ -35,6 +46,15 @@ function SmartSprinklers (log, config) {
   this.lowThreshold = config.lowThreshold
   this.highThreshold = config.highThreshold
   this.cycles = config.cycles || 2
+  this.emailEnable = config.emailEnable
+  this.senderName = config.senderName
+  this.senderEmail = config.senderEmail
+  this.sendTo = config.sendTo
+  this.smtpHost = config.smtpHost
+  this.smtpPort = config.smtpPort
+  this.portSecure = config.portSecure
+  this.userID = config.userID
+  this.userPwd = config.userPwd
   this.JanRad = config.JanRad
   this.FebRad = config.FebRad
   this.MarRad = config.MarRad
@@ -101,6 +121,19 @@ SmartSprinklers.prototype = {
         var Weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
         var Months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
         
+        var sendFrom = this.senderName + " <" + this.senderEmail + ">"
+        mailTransport.host = this.smtpHost
+        mailTransport.port = this.smtpPort
+        mailTransport.secure = this.portSecure
+        mailTransport.auth = {
+            user: this.userID,
+            pass: this.userPwd
+          }
+        mailContruct.from = sendFrom
+        mailContruct.to = this.sendTo
+        mailContruct.text = ""
+        var mailSubject = ""
+
         var forecast = [{},{},{},{},{},{},{},{}]
         for (var pop = 0; pop <= 7; pop++){
           forecast[pop].summary = json.daily[pop].weather[0].description,
@@ -155,11 +188,20 @@ SmartSprinklers.prototype = {
         return ET_o
         }
 
+        var forecastMail = "----------------------------------------------------------\n"
         for (var dd = 0; dd <= 7; dd++) {
           forecast[dd].ETO = CalcETO(forecast[dd])
+          if (this.verbosed) {
           this.log('-----------------------------------------------------')
           this.log('%s on %s %s with %s% clouds & %s% RH', forecast[dd].summary, Weekday[forecast[dd].sunrise.getDay()], forecast[dd].sunrise.toLocaleDateString(), forecast[dd].clouds, forecast[dd].humidity)
           this.log('ETo:%smm|Rain:%smm|Min:%s°C|Max:%s°C|Wind:%sm/s', forecast[dd].ETO.toFixed(2), forecast[dd].rain, forecast[dd].min, forecast[dd].max, forecast[dd].speed)
+          }
+          forecastMail = forecastMail + forecast[dd].summary + " on " + Weekday[forecast[dd].sunrise.getDay()] + " with " + forecast[dd].clouds + "% clouds" + "\n"
+          forecastMail = forecastMail + "Sunrise: " + forecast[dd].sunrise.toLocaleString() + "  |  RH: " + forecast[dd].humidity + "%\n"
+          forecastMail = forecastMail + "[Min | Max] Temp: " + forecast[dd].min + "°C | " + forecast[dd].max + "°C" + "\n"
+          forecastMail = forecastMail + "Pressure: " + forecast[dd].pressure + " hPa | Wind: " + forecast[dd].speed + " m/s" + "\n"
+          forecastMail = forecastMail + "Precipitation: " + forecast[dd].rain + " mm | ETo: " + forecast[dd].ETO.toFixed(2) + " mm" + "\n"
+          forecastMail = forecastMail + "----------------------------------------------------------\n"
          }
 
          var WaterNeeded = 0
@@ -205,13 +247,13 @@ SmartSprinklers.prototype = {
             }
           }
           wateringTime[zDay] = zoneTimes[zDay].reduce((a, b) => a + b, 0)
-          if (this.verbosed) {
-          this.log('------------------------------------------------')
-          this.log('Day %s Zone times: %s', zDay, zoneTimes[zDay])
-          this.log('------------------------------------------------')
-          this.log('Day %s Total time: %s', zDay, wateringTime[zDay])
-          this.log('------------------------------------------------')
-          }
+          //if (this.verbosed) {
+          //this.log('------------------------------------------------')
+          //this.log('Day %s Zone times: %s', zDay, zoneTimes[zDay])
+          //this.log('------------------------------------------------')
+          //this.log('Day %s Total time: %s', zDay, wateringTime[zDay])
+          //this.log('------------------------------------------------')
+          //}
         }
 
         zDay = 0
@@ -221,45 +263,73 @@ SmartSprinklers.prototype = {
         } else {
           zDay = 1
         }
+        var startTime = new Date(forecast[zDay].sunrise.getTime() - (wateringTime[zDay] + this.sunriseOffset) * 60000)
+        var finishTime = new Date(startTime.getTime() + wateringTime[zDay] * 60000)
 
-        if (!this.masterDisable && this.highThreshold < forecast[zDay].max && this.lowThreshold < forecast[zDay].min) 
+        if (startTime.getTime() > Date.now() && !this.masterDisable && this.highThreshold < forecast[zDay].max && this.lowThreshold < forecast[zDay].min && wateringTime[zDay] != 0) 
         {
           for (var zone = 1; zone <= this.zoned; zone++) {
           this.zoneDuration[zone] = zoneTimes[zDay][zone-1] / this.cycles
           }
           
-          var startTime = new Date(forecast[zDay].sunrise.getTime() - (wateringTime[zDay] + this.sunriseOffset) * 60000)
-          var finishTime = new Date(startTime.getTime() + wateringTime[zDay] * 60000)
           this.log('------------------------------------------------')
-          this.log('Watering starts: %s', Weekday[startTime.getDay()], startTime.toLocaleString())
-          this.log('Watering finishes: %s', Weekday[finishTime.getDay()], finishTime.toLocaleString())
+          this.log('Watering starts: %s', Weekday[startTime.getDay()].substring(0,3), startTime.toLocaleString())
+          this.log('Watering finishes: %s', Weekday[finishTime.getDay()].substring(0,3), finishTime.toLocaleString())
           this.log('Total watering time: %s minutes', minTommss(wateringTime[zDay]))
           this.log('------------------------------------------------')
+
+          var waterMail = "----------------------------------------------------------\n"
+          waterMail = waterMail + "Total watering time: " + minTommss(wateringTime[zDay]) + " minutes\n"
+          waterMail = waterMail + "Start: " + Weekday[startTime.getDay()] + " " + startTime.toLocaleString() +"\n"
+          waterMail = waterMail + "Finish: " + Weekday[finishTime.getDay()] + " " + finishTime.toLocaleString() + "\n"
+          waterMail = waterMail + "----------------------------------------------------------\n"
 
           for (zone = 1; zone <= this.zoned; zone++) {
             if (this.zoneDuration[zone] != 0){
               this.log('%s | %s minutes | %sx %s minute cycles', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles), this.cycles, minTommss(this.zoneDuration[zone]))
+              waterMail = waterMail + this.zones[zone-1].zoneName + ": " + minTommss(this.zoneDuration[zone] * this.cycles) + " minutes  |  " + this.cycles + " x " + minTommss(this.zoneDuration[zone]) + " min. cycles\n"
             } else {
-              this.log('%s | %s minutes | X--> NO WATERING <--X', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles))  
+              this.log('%s | %s minutes |     NO WATERING', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles))  
+              waterMail = waterMail + this.zones[zone-1].zoneName + ":     NO WATERING\n"
             }
           }
+          waterMail = waterMail + "----------------------------------------------------------\n"
+
           var recheck = new Date(startTime-(this.recheckTime*60000))
           if ((recheck > Date.now()) && ((recheck-(30*60000)) > Date.now()) && (this.recheckTime != 0)) {
             schedule.scheduleJob(recheck, function () {
               this._calculateSchedule(function () {})
             }.bind(this))
             this.log('Reassessment: %s %s', Weekday[recheck.getDay()], recheck.toLocaleString())
-          } else {this.log('No further reassessment before run!')}
+            waterMail = waterMail + "Reassessment: " + Weekday[recheck.getDay()].substring(0,3) + " " + recheck.toLocaleString() + "\n"
+          } else {this.log('No further reassessment before schedule!')
+          waterMail = waterMail + "No further reassessment before schedule.\n"
+          }
           
           schedule.scheduleJob(startTime, function () {
             this.log('Starting water cycle 1/%s', this.cycles)
             this._wateringCycle(1, 1)
           }.bind(this))
           this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(1)
+          if (wateringDone) {mailSubject = "✅ Watering finished | " + "♒️ Irrigation Scheduled ⏱"}
+          else {mailSubject = "♒️ Irrigation Scheduled ⏱"}
+          mailContruct.subject = mailSubject
+          mailContruct.text = waterMail + "----------------------------------------------------------\n" + "----------------------FORECAST--------------------\n" + forecastMail
+          wateringDone = false
+          if (this.emailEnable) {sendEmail(mailTransport, mailContruct).catch(console.error)}
         } else {
           this.log('------------------------------------------------')
           this.log('No schedule set, recalculation: %s', forecast[zDay].sunrise.toLocaleString())
           this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(0)
+          if (wateringDone) {mailSubject = "✅ Watering finished | " + "🚫 No Irrigation Scheduled ⏱"}
+          else {mailSubject = "🚫 No Irrigation Scheduled ⏱"}
+          waterMail = "----------------------------------------------------------\n" + "No schedule set. Recalculation set for:\n"
+          waterMail = waterMail + Weekday[forecast[zDay].sunrise.getDay()] + ", " + forecast[zDay].sunrise.toLocaleString() + "\n"
+          waterMail = waterMail + "----------------------------------------------------------\n" + "----------------------FORECAST--------------------\n"
+          mailContruct.text = waterMail + forecastMail
+          mailContruct.subject = mailSubject
+          wateringDone = false
+          if (this.emailEnable) {sendEmail(mailTransport, mailContruct).catch(console.error)}
           schedule.scheduleJob(forecast[zDay].sunrise, function () {
             this._calculateSchedule(function () {})
           }.bind(this))
@@ -284,6 +354,7 @@ SmartSprinklers.prototype = {
           this.log('Starting watering cycle %s/%s', nextCycle, this.cycles)
         } else {
           this.log('Watering finished')
+          wateringDone = true
           this._calculateSchedule(function () {})
         }
       }
@@ -325,10 +396,8 @@ SmartSprinklers.prototype = {
     }
     this.log('Initialized %s zones', this.zoned)
 
-    if (!this.masterDisable) {
-      this._calculateSchedule(function () {})
-    }
-    
+    this._calculateSchedule(function () {})
+
     return services
   }
 

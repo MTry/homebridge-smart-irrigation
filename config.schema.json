@@ -109,6 +109,63 @@
       "maximum": 30,
       "default": 20
       },
+      "emailEnable": {
+        "title": "Enable",
+        "description": "Enable Notifications",
+        "type": "boolean",
+        "required": false,
+        "default": false
+        },
+        "senderName": {
+        "title": "Sender Name:",
+        "type": "string",
+        "required": true,
+        "default": "💦 Irrigation Control"
+        },      
+        "senderEmail": {
+        "title": "Sender Email ID:",
+        "type": "string",
+        "pattern": "^\\S+@\\S+$",
+        "required": true,
+        "default": "email"
+        },
+        "sendTo": {
+        "title": "Receiver Email ID:",
+        "type": "string",
+        "pattern": "^\\S+@\\S+$",
+        "required": true,
+        "default": "Name"
+        },
+        "smtpHost": {
+        "title": "SMTP Host:",
+        "type": "string",
+        "required": true,
+        "default": "Host"
+        },
+        "smtpPort": {
+        "title": "SMTP Port:",
+        "type": "number",
+        "required": true,
+        "default": 587
+        },
+        "portSecure": {
+        "title": "Secure Port",
+        "type": "boolean",
+        "required": false,
+        "default": false
+        },      
+        "userID": {
+        "title": "SMTP Username:",
+        "type": "string",
+        "required": true,
+        "default": "username"
+        },
+        "userPwd": {
+        "title": "SMTP Password:",
+        "type": "string",
+        "required": true,
+        "default": "password"
+        },
 
       "JanRad": {"type": "number", "title": "January", "default":6},
       "FebRad": {"type": "number", "title": "February", "default":6},
@@ -358,7 +415,78 @@
         }
       ]
     },
-
+    {
+      "type": "section",
+      "title": "Email Notifications Setup",
+      "expandable": true,
+      "expanded": false,
+      "htmlClass": "row",
+      "items": [
+        {
+          "type": "section",
+          "htmlClass": "col-xs-3",
+          "items": [
+            "emailEnable"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-3",
+          "items": [
+            "senderName"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-6",
+          "items": [
+            "senderEmail"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-6",
+          "items": [
+            "sendTo"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-6",
+          "items": [
+            "smtpHost"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-3",
+          "items": [
+            "smtpPort"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-3",
+          "items": [
+            "portSecure"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-3",
+          "items": [
+            "userID"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-3",
+          "items": [
+            "userPwd"
+          ]
+        }
+      ]
+    },
     {
       "type": "section",
       "title": "Monthly Mean Daily Solar Radiiation Data [kWh/day]",
