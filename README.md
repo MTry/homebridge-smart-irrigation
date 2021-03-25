@@ -61,7 +61,7 @@ Additionally, information about the number of drip emitters, their discharge rat
 3. If the zone is `enabled` & `adaptive`, calculate the total <b>ET<sub>o</sub></b> until the next watering day
 4. If `rainFactoring` is enabled, calculate the total projected rainfall till the zone's next watering day
 5. Calculate the net irrigation requirement based on total <b>ET<sub>o</sub></b> and total rain till the zone's next watering
-6. Calculate zone specific time required basd on that zone's irrigation infrastructure and crop profile
+6. Calculate zone specific time required based on that zone's irrigation infrastructure and crop profile
 7. Schedule the watering run and send notification email if `emailEnable`
 8. Reassess `recheckTime` minutes before the scheduled run
 
@@ -83,6 +83,7 @@ Additionally, information about the number of drip emitters, their discharge rat
 | `altitude` | Enter the altitude in meters | `0` |
 |
 ## Email Notification Settings
+Currently this supports basic authentication. If using Gmail, you will need to go to the security settings to enable less secure app access. *It miight be best to create a specific ID for this purpose to avoid security risks to your main account!*
 
 | Key | Description | Default |
 | --- | --- | --- |
@@ -136,10 +137,48 @@ High--stronger winds and greater exposure<br>
 | `dripLPH` | Drip emmiter discharge rate in LPH | `2` |
 | `dripNos` | Number of drip emmiters used in this zone | `1` |
 | `dripArea` | Irrigation area in `m`<sup>`2`</sup>| `1` |
-| `efficiency` | Irrigation system efficiency `%` - usually `90%` for drip | `90` |
+| `efficiency` | Irrigation system efficiency  - usually `90%` for drip | `90` |
 | `cropCoef` | Crop Coefficient [`0.1 - 0.9`] | `0.5` |
 | `plantDensity` | Plantation Density [`0.5 - 1.3`] | `1` |
 | `expFactor` | Exposure Factor [`0.5 - 1.4`] | `1` |
 | `wateringWeekdays` | Weekdays to water - *at least 1!* | ALL |
 | `wateringMonths` | Watering Months - *uncheck to skip watering in that month* | ALL |
 |
+
+## Scheduling
+
+When scheduling is enabled, the plugin will see if watering can be completed today by however many minutes before sunrise  specified in `sunriseOffset`, if not, it will schedule the relevant time for the next day.
+
+The day selected must match the following criteria for watering to place:
+
+- Not a restricted day/month
+- Forecasted rain for today and tomorrow not higher than threshold
+- Forecasted low and high temperature higher than their respective thresholds
+
+If adaptive watering is disabled, but scheduling remains enabled, each zone will be watered for a percentage (specified in `zonePercentages`) of the number of minutes specified in `defaultDuration`
+
+The plugin schedules asynchronous zone watering times (no more than one zone on at a given time), as most systems are incapable of supplying sufficient pressure to water multiple zones simultaneously.
+
+Start times will vary daily as a result of changing sunrise times.
+
+## Adaptive watering
+
+When adaptive watering is enabled, a zone's total watering duration will be calculated as a percentage (specified in `zonePercentages`) of the calculation below:
+
+## Notes
+
+- If you are using scheduling, the sprinkler controller should have an onboard auto-shutoff feature where the valve will automatically close after a period of time (e.g. `30` minutes) has passed so that valves are not left open if there was an error receiving the 'off message' from the plugin
+
+- I am open to suggestions about new ways to calculate watering times for adaptive watering in place of the simple calculation currently implemented
+
+- The watering times displayed to you within the homebridge log are rounded to make reading them easier due to JavaScript's [floating point calculations](https://www.youtube.com/watch?v=PZRI1IfStY0). The real watering times are not rounded
+
+- Your API key grants you access to `1000` API calls per day. The plugin will only make an API call once per day (as well as whenever homebridge starts up) so you shouldn't need to worry about running out of API calls
+
+## To-do
+
+- [ ] Ensure the main service is set to `In Use` when a valve is active
+
+- [ ] Set `Program Mode` to manual when user manually overrides valve
+
+- [ ] Update `Remaining Duration` accordingly - for main service or for each valve?
