@@ -95,6 +95,6 @@ Additionally, information about the number of drip emitters, their discharge rat
 | `userID` | SMTP Username | N/A |
 | `userPwd` | SMTP Password | N/A |
 
-## Monthly Mean Daily Solar Radiation Data [kWh/day]
+## Monthly data of Mean Daily Solar Radiation [kWh/day]
 
 This requires some explanation. 
