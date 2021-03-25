@@ -489,7 +489,7 @@
     },
     {
       "type": "section",
-      "title": "Monthly Mean Daily Solar Radiiation Data [kWh/day]",
+      "title": "Monthly Mean Daily Solar Radiation Data [kWh/day]",
       "expandable": true,
       "expanded": false,
       "htmlClass": "row",
