@@ -32,6 +32,8 @@
     "adaptive",
     "automation",
     "climate",
+    "evapotranspiration",
+    "ETo",
     "weather",
     "watering",
     "garden",
