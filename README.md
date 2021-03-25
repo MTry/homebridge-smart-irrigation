@@ -28,7 +28,8 @@ Searching for an irrigation or sprinkler control plugin never showed any suitabl
 1. Install [homebridge](https://github.com/nfarina/homebridge#installation-details)
 2. Install this plugin: `npm install -g git+https://github.com/MTry/homebridge-smart-irrigation.git`
 3. Sign up at the [OpenWeatherMap API](https://openweathermap.org/api) and retrieve your API key (if you want scheduling). The free tier allows you 1000 API calls a day and this plugin will make only a couple!
-4. Configure the settings
+4. Gather the mean daily Solar Radiation figures for your location in kWh/day. Please read the settings section for more details
+5. Configure the settings
 
 ## Operating Principle
 
@@ -69,32 +70,76 @@ Additionally, information about the number of drip emitters, their discharge rat
 | Key | Description | Default |
 | --- | --- | --- |
 | `name` | Name to appear in the Home app | N/A |
-| `verbosed` | Verbose Calculations and Extended Climate data | true |
-| `masterDisable` | Disable scheduling all irrigation | false |
-| `recheckTime` | Reassess - minutes before runtime | 0 |
-| `cycles` | Number of cycles per watering run | 2 |
-| `sunriseOffset` | Minutes before the sunrise watering should get over by | 0 |
-| `lowThreshold` | Skip scheduling when forecasted minimum temperature falls below this | 10 |
-| `highThreshold` | Skip scheduling when forecasted maximum temperature stays below this | 20 |
+| `verbosed` | Verbose Calculations and Extended Climate data | `true` |
+| `masterDisable` | Disable scheduling all irrigation | `false` |
+| `recheckTime` | Reassess - minutes before runtime | `0` |
+| `cycles` | Number of cycles per watering run | `2` |
+| `sunriseOffset` | Minutes before the sunrise watering should get over by | `0` |
+| `lowThreshold` | Skip scheduling when forecasted minimum temperature falls below this | `10` |
+| `highThreshold` | Skip scheduling when forecasted maximum temperature stays below this | `20` |
 | `keyAPI` | Your OpenWeatherMap API Key | N/A |
 | `latitude` | Enter the latitude in decimals including '-' if in the southern hemisphere | N/A |
 | `longitude` | Your decimal longitude | N/A |
-| `altitude` | Enter the altitude in meters | 0 |
-
+| `altitude` | Enter the altitude in meters | `0` |
+|
 ## Email Notification Settings
 
 | Key | Description | Default |
 | --- | --- | --- |
-| `emailEnable` | Enable Notifications | false |
+| `emailEnable` | Enable Notifications | `false` |
 | `senderName` | Sender Name | N/A |
 | `senderEmail` | Sender Email ID | N/A |
 | `sendTo` | Receiver Email ID | N/A |
 | `smtpHost` | SMTP Host | N/A |
 | `smtpPort` | SMTP Port | N/A |
-| `portSecure` | Secure Port | false |
+| `portSecure` | Secure Port | `false` |
 | `userID` | SMTP Username | N/A |
 | `userPwd` | SMTP Password | N/A |
-
+|
 ## Monthly data of Mean Daily Solar Radiation [kWh/day]
 
-This requires some explanation. 
+There are many sources but one that I used is [Weatherspark](https://weatherspark.com). Search for your location. Scroll to the bottom of the page to the Solar Energy section and note the figures for each month(the months are clickable!) in kWh/day which is the daily mean figure for the month. Feel free to use an alternate source that you trust but keep in mind the unit of measurment - **kWh/day**!
+
+| Key | Description | Default |
+| --- | --- | --- |
+| `xxxRad` | Mean Daily Solar Radiation [kWh/day] for the month `xxx`| `6` |
+| 
+
+## Zones setup
+This is where multiple zones can be configured - with a limit of `8 zones` at the moment.<br>
+> **Crop Coefficient** - [Read here for reference!](https://ucanr.edu/sites/UrbanHort/Water_Use_of_Turfgrass_and_Landscape_Plant_Materials/Plant_Factor_or_Crop_Coefficient__What’s_the_difference/)<br>
+This is based on the crop type or species and their water needs. [`0.1 - 0.9`]
+
+> **Planting Density**<br>
+> Low—sparse: `0.5 - 0.9`<br>
+> Average—moderate coverage: `1`<br>
+> High--complete coverage: `1.1 - 1.3`<br>
+
+> **Exposure Factor**<br>
+> The microclimate or exposure factor [`0.5 - 1.4`]<br>
+Average--open field<br>
+Low--moderate wind, part sun<br>
+High--stronger winds and greater exposure<br>
+*A protected, shady location would use a lower factor.*
+
+
+| Key | Description | Default |
+| --- | --- | --- |
+| `zoneName` | Friendly zone name | N/A |
+| `enabled` | Zone Enabled | `true` |
+| `adaptive` | Climate Adaptive Zone | `true` |
+| `rainFactoring` | Factor rain amount in watering & respect the set threshold to skip irrigation for this zone| `true` |
+| `defDuration` | Default zone duration in minutes when not adaptive [max `60`] | `20` |
+| `maxDuration` | Maximum duration settable in minutes [max `60`]| `30` |
+| `rainThreshold` | Rain Threshold[`mm`] above which watering skipped for this zone | `2.5` |
+| `tweakFactor` | Tweak proposed watring in `%` [`max:200`] | `100` |
+| `dripLPH` | Drip emmiter discharge rate in LPH | `2` |
+| `dripNos` | Number of drip emmiters used in this zone | `1` |
+| `dripArea` | Irrigation area in `m`<sup>`2`</sup>| `1` |
+| `efficiency` | Irrigation system efficiency `%` - usually `90%` for drip | `90` |
+| `cropCoef` | Crop Coefficient [`0.1 - 0.9`] | `0.5` |
+| `plantDensity` | Plantation Density [`0.5 - 1.3`] | `1` |
+| `expFactor` | Exposure Factor [`0.5 - 1.4`] | `1` |
+| `wateringWeekdays` | Weekdays to water - *at least 1!* | ALL |
+| `wateringMonths` | Watering Months - *uncheck to skip watering in that month* | ALL |
+|

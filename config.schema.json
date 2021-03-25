@@ -263,16 +263,16 @@
               "title": "Drip Efficiency",
               "type": "number",
               "description": "Irrigation Efficiency % [100][0<-100]",
-              "default": 100,
+              "default": 90,
               "maximum": 100,
               "exclusiveMinimum": 0
             },
             "cropCoef": {
               "title": "Crop Coefficient",
               "type": "number",
-              "description": "Crop Coefficient [1][.1-1]",
-              "default": 1,
-              "maximum": 1,
+              "description": "Crop Coefficient [1][.1-.9]",
+              "default": 0.5,
+              "maximum": 0.9,
               "minimum": 0.1
             },
               "plantDensity": {
@@ -288,7 +288,7 @@
               "type": "number",
               "description": "Exposure Factor [1][.5-1.4]",
               "default": 1,
-              "maximum": 1.3,
+              "maximum": 1.4,
               "minimum": 0.5
             },
             "wateringMonths": {
