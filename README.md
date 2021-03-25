@@ -66,7 +66,6 @@ Additionally, information about the number of drip emitters, their discharge rat
 
 ## Primary Settings
 
-
 | Key | Description | Default |
 | --- | --- | --- |
 | `name` | Name to appear in the Home app | N/A |
@@ -81,10 +80,8 @@ Additionally, information about the number of drip emitters, their discharge rat
 | `latitude` | Enter the latitude in decimals including '-' if in the southern hemisphere | N/A |
 | `longitude` | Your decimal longitude | N/A |
 | `altitude` | Enter the altitude in meters | 0 |
-<br>
 
 ## Email Notification Settings
-
 
 | Key | Description | Default |
 | --- | --- | --- |
@@ -97,8 +94,6 @@ Additionally, information about the number of drip emitters, their discharge rat
 | `portSecure` | Secure Port | false |
 | `userID` | SMTP Username | N/A |
 | `userPwd` | SMTP Password | N/A |
-
-<br>
 
 ## Monthly Mean Daily Solar Radiiation Data [kWh/day]
 
