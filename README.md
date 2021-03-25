@@ -13,6 +13,21 @@ This [homebridge](https://github.com/nfarina/homebridge) plugin exposes a multi-
 
 Although a <i>dummy</i>, it brings smarts of a climate/plant adaptive irrigation controller with the use of [OpenWeatherMap API](https://openweathermap.org/api). All parameters can be configured from the configuration UI.
 
+## Why?
+Searching for an irrigation or sprinkler control plugin never showed any suitable option for my needs. The one that came closest and is the <b><u>inspiration and basis</b></u> for this plugin is [Tom Rodrigues's](https://github.com/Tommrodrigues) [homebridge-web-sprinklers](https://github.com/Tommrodrigues/homebridge-web-sprinklers). But like many others, I didn't have the http hardware for it to control! So I stripped the code to just expose the dummy accessories, reworked the irrigation logic - and then one thing led to another.. in my quest to achieve a more granular control and incorporate more irrigatioon science to create a climate adaptive irrigation controller.
+
+## Simplest use case..
+1. Configure the plugin with your parameters to expose the reequired number sprinkler accessories(zones)
+2. Use Eve or other Homekit controller to configure <b><u>ANY</b></u> other smart plug or outlet or valve to follow the state of the above exposed sprinklers
+3. The smartplug/outlet/valve in their simplest configuration could be just driving the power of any solenoid valve!
+
+## Installation
+
+1. Install [homebridge](https://github.com/nfarina/homebridge#installation-details)
+2. Install this plugin: `npm install -g git+https://github.com/MTry/homebridge-smart-irrigation.git`
+3. Sign up at the [OpenWeatherMap API](https://openweathermap.org/api) and retrieve your API key (if you want scheduling). The free tier allows you 1000 API calls a day and this plugin will make only a couple!
+4. Configure the settings
+
 ## Operating Principle
 
 One of the primary factors affecting the water demand of plants is <b>evapotranspiration</b>, also denoted as <b>ET<sub>o</sub></b>. While the subject of irrigation is one of extensive global research and there is no end to the extent of complication one can end up with, this plugin chooses to focus on three - <b>ET<sub>o</sub></b>, <b>local rain</b> and the <b>crop characteristics</b> of each of the zones configured. 
@@ -30,7 +45,7 @@ One of the primary factors affecting the water demand of plants is <b>evapotrans
 <b>Rain</b> is derived from [OpenWeatherMap API](https://openweathermap.org/api) along with some of the factors above using the `latitude` and `longitude` configured.
 
 <b>Crop characteristics</b> uses some of the understanding gained from the website of [University of California, Division of Agriculture and Natural Resources](https://ucanr.edu/sites/UrbanHort/Water_Use_of_Turfgrass_and_Landscape_Plant_Materials/) and particularly from this document for [calculating drip irrigation schedules](https://ucanr.edu/sites/scmg/files/30917.pdf). Specifically, it utilises the following based on the conditions of the particular zone being irrigated:
-1. Crop coefficients [0.1 - 0.9] based on the type of plant [Read here!](https://ucanr.edu/sites/UrbanHort/Water_Use_of_Turfgrass_and_Landscape_Plant_Materials/Plant_Factor_or_Crop_Coefficient__What’s_the_difference/)
+1. Crop coefficients [0.1 - 0.9] based on the type of plants [Read here!](https://ucanr.edu/sites/UrbanHort/Water_Use_of_Turfgrass_and_Landscape_Plant_Materials/Plant_Factor_or_Crop_Coefficient__What’s_the_difference/)
 2. Planting Density [0.5 - 1.3]
 3. Exposure Factor [0.5 - 1.4] based on the zone's microclimate
 
