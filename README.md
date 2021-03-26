@@ -16,7 +16,7 @@ Although a <i>dummy</i>, it brings smarts of an <b>evapotranspiration</b>[<b>ET<
 The plugin can optionally email you with the watering schedule it has calculated, or when a watering run is completed, along with the next 7-day weather forecast.
 
 ## Why?
-Searching for an irrigation or sprinkler control plugin never showed any suitable option for my needs. The one that came closest and is the <b><u>inspiration and basis</b></u> for this plugin is [Tom Rodrigues's](https://github.com/Tommrodrigues) [homebridge-web-sprinklers](https://github.com/Tommrodrigues/homebridge-web-sprinklers). But like many others, I didn't have the http hardware for it to control! So I stripped the code to just expose the dummy accessories, reworked the irrigation logic - and then one thing led to another.. in my quest to achieve a more granular control and incorporate more irrigation science to create a climate adaptive irrigation controller.
+Searching for an irrigation or sprinkler control plugin never showed any suitable option for my needs. The one that came closest and is the <b><u>inspiration and basis</b></u> for this plugin is [Tom Rodrigues's](https://github.com/Tommrodrigues) [homebridge-web-sprinklers](https://github.com/Tommrodrigues/homebridge-web-sprinklers). But like many others, I didn't have the http hardware for it to control! So I stripped the code to just expose the dummy sprinkler accessories, reworked the irrigation logic - and then, one thing led to another.. in my quest to achieve a more granular control and incorporate more irrigation science to create a climate adaptive irrigation controller.
 
 ## Basic use case..
 1. Configure the plugin with your parameters to expose the required number sprinkler accessories(zones)
@@ -119,7 +119,7 @@ Going forward, it will be great to extract live daily radiation data/forecast th
 | `xxxRad` | Mean Daily Solar Radiation [kWh/day] for the month `xxx`| `6` |
 
 ## Zones setup
-This is where multiple zones can be configured - with a limit of `8 zones` at the moment.<br>
+This is where multiple zones can be configured - with a limit of `8 zones` at the moment. <i>There is no reason why more than 8 zones will not work so if this becomes a constraint, let me know and I will bump up this limi!</i><br>
 > **Crop Coefficient** - [Read here for reference!](https://ucanr.edu/sites/UrbanHort/Water_Use_of_Turfgrass_and_Landscape_Plant_Materials/Plant_Factor_or_Crop_Coefficient__What’s_the_difference/)<br>
 This is based on the crop type or species and their water needs. [`0.1 - 0.9`]
 
@@ -173,10 +173,12 @@ High--stronger winds and greater exposure<br>
 
 - [ ] Prettier HTML email notifications!?
 
+- [ ] Cuter logo!?
+
 ## Support/Contribution
 
 I dont have a great deal of programming experience so the biggest help and contribution you can make is helping with code or "Way forward.." items!
 
 If financial contribution is on your agenda, may I humbly redirect you to [Homebridge](https://github.com/nfarina/) which makes this community possible. Also consider supporting several fine developers who offer an incredible amount of their time and effort in supporting the community and creating fantastic plugins.
 
-I use this plugin with Sonoff devices exposed by the fantastic [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) from [Ben](https://github.com/sponsors/bwp91) who somehow manages to squeeze more than 24 hours in a day giving support and fixing bugs!
+I use this plugin with Sonoff devices exposed by the fantastic [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) plugin from [Ben](https://github.com/sponsors/bwp91) who somehow manages to squeeze more than 24 hours in a day giving support and fixing bugs!
