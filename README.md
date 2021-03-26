@@ -179,4 +179,4 @@ I dont have a great deal of programming experience so the biggest help and contr
 
 If financial contribution is on your agenda, may I humbly redirect you to [Homebridge](https://github.com/nfarina/) which makes this community possible. Also consider supporting several fine developers who offer an incredible amount of their time and effort in supporting the community and creating fantastic plugins.
 
-I use this plugin with Sonoff devices exposed by the fantastic [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) by [Ben](https://github.com/sponsors/bwp91) who somehow manages to squeeze more than 24 hours in a day 
+I use this plugin with Sonoff devices exposed by the fantastic [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) from [Ben](https://github.com/sponsors/bwp91) who somehow manages to squeeze more than 24 hours in a day giving support and fixing bugs!
