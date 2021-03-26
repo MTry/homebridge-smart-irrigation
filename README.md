@@ -176,6 +176,8 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 - [ ] The plugin uses [request](https://github.com/request/request) which is now deprecated - would like to transition to either [node-fetch](https://www.npmjs.com/package/node-fetch), [got](https://www.npmjs.com/package/got) or any other suitable one which is lightweight and easy to implement - help solicited!
 
+- [ ] Use live daily radiation data/forecast through an API instead of relying on having to feed historical averages.. the only  service I am aware of which has a free option is [Solcast](https://solcast.com/solar-radiation-data/) which offers 10 API calls a day. Any suggestions if its worth doing this?
+
 - [ ] Prettier HTML email notifications!?
 
 - [ ] Appropriate logo!?
