@@ -26,7 +26,7 @@ Searching for an irrigation or sprinkler control plugin never showed any suitabl
 ## Installation
 
 1. Install [Homebridge](https://github.com/nfarina/homebridge#installation-details)
-2. Install this plugin: `npm install -g git+https://github.com/MTry/homebridge-smart-irrigation.git`
+2. Install this plugin: `npm install -g homebridge-smart-irrigation`
 3. Sign up at the [OpenWeatherMap API](https://openweathermap.org/api) and retrieve your API key (if you want scheduling). The free tier allows  1000 API calls a day and this plugin will make no more than a couple on any day!
 4. Gather the mean daily Solar Radiation figures for your location in kWh/day. Please read the settings section for more details
 5. Configure the settings
