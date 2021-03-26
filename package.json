@@ -1,5 +1,5 @@
 {
-  "private": true,
+  "private": false,
   "displayName": "Homebridge Smart Irrigation",
   "name": "homebridge-smart-irrigation",
   "version": "1.0.0",
