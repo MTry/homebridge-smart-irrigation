@@ -9,9 +9,9 @@
 
 ## Description
 
-This [homebridge](https://github.com/nfarina/homebridge) plugin exposes a multi-zone irrigation sprinkler <b>dummy control system</b> to Apple's [HomeKit](http://www.apple.com/ios/home/).
+This [Homebridge](https://github.com/nfarina/homebridge) plugin exposes a multi-zone irrigation sprinkler <b>dummy control system</b> to Apple's [HomeKit](http://www.apple.com/ios/home/).
 
-Although a <i>dummy</i>, it brings smarts of a climate/plant adaptive irrigation controller with the use of [OpenWeatherMap API](https://openweathermap.org/api). All parameters can be configured from the configuration UI and the plugin offers granular conrol specific to every zone's individual requirerments.
+Although a <i>dummy</i>, it brings smarts of an <b>evapotranspiration</b>[<b>ET<sub>o</sub></b>] based climate/plant adaptive irrigation controller with the use of [OpenWeatherMap API](https://openweathermap.org/api). All parameters can be configured from the configuration UI and the plugin offers granular control specific to every zone's individual requirerments.
 
 The plugin can optionally email you with the watering schedule it has calculated, or when a watering run is completed, along with the next 7-day weather forecast.
 
@@ -25,7 +25,7 @@ Searching for an irrigation or sprinkler control plugin never showed any suitabl
 
 ## Installation
 
-1. Install [homebridge](https://github.com/nfarina/homebridge#installation-details)
+1. Install [Homebridge](https://github.com/nfarina/homebridge#installation-details)
 2. Install this plugin: `npm install -g git+https://github.com/MTry/homebridge-smart-irrigation.git`
 3. Sign up at the [OpenWeatherMap API](https://openweathermap.org/api) and retrieve your API key (if you want scheduling). The free tier allows  1000 API calls a day and this plugin will make only a couple!
 4. Gather the mean daily Solar Radiation figures for your location in kWh/day. Please read the settings section for more details
@@ -172,3 +172,11 @@ High--stronger winds and greater exposure<br>
 - [ ] The plugin uses [request](https://github.com/request/request) which is now deprecated - would like to transition to either [node-fetch](https://www.npmjs.com/package/node-fetch), [got](https://www.npmjs.com/package/got) or any other sutable one which is lightweight and easy to implement - help solicited
 
 - [ ] Prettier HTML email notifications!?
+
+## Support/Contribution
+
+I dont have a great deal of programming experience so the biggest help and contribution you can make is helping with code or "Way forward.." items!
+
+If financial contribution is on your agenda, may I humbly redirect you to [Homebridge](https://github.com/nfarina/) which makes this community possible. Also consider supporting several fine developers who offer an incredible amount of their time and effort in supporting the community and creating fantastic plugins.
+
+I use this plugin with Sonoff devices exposed by the fantastic [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) by [Ben](https://github.com/sponsors/bwp91) who somehow manages to squeeze more than 24 hours in a day 
