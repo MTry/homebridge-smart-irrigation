@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://github.com/MTry/homebridge-smart-irrigation/img/smartIrrigation.png" height="140"></a>
+  <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://github.com/MTry/homebridge-smart-irrigation/blob/master/img/smartIrrigation.png" height="140"></a>
 </p>
 
 <span align="center">
