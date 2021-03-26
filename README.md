@@ -40,7 +40,7 @@ One of the primary factors affecting the water demand of plants is <b>evapotrans
 1. Min/Max Temperatures
 2. Mean RH
 3. Wind speed
-4. Solar Radiation <i>[more on this later..]</i>
+4. Shortwave Solar Radiation <i>[more on this later..]</i>
 5. Atmospheric Pressure (barometric)
 6. Latitude
 7. Elevation
@@ -57,11 +57,11 @@ Additionally, information about the number of drip emitters, their discharge rat
 
 ## Operating Logic & Scheduling
 
-If `masterDisable` is not enabled, the plugin will check if watering can be completed today by however many minutes before sunrise  specified in `sunriseOffset` or else will schedule the irrigation for the next day. Regardless of `masterDisable` it will gather the weather information and also send a notification email if `emailEnable` is set.
+If `masterDisable` is not checked, the plugin will calculate the total watering durartion and check if watering can be completed today before sunrise or by the time as specified in `sunriseOffset`. If not, it will schedule the irrigation for the next day. Regardless of `masterDisable` it will gather the weather information and also send a notification email if `emailEnable` is set.
 
 Forecasted low and high temperature higher than their respective thresholds must be met for the day being scheduled.
 
-If `adaptive` watering is disabled for a zone, but scheduling remains `enabled`, the zone will be watered based on the calculatd time, else for the number of minutes specified in `defDuration`.
+If `adaptive` watering is disabled for a zone, but scheduling remains `enabled`, the zone will be watered for the number of minutes specified by `defDuration` and not factor any other calculations.
 
 The plugin schedules asynchronous zone watering - cycling sequentially through all the scheduled zones needing water one at a time and repeats the process the number of times specified by `cycles`.
 
@@ -113,7 +113,7 @@ Currently this supports basic authentication. If using Gmail, you will need to g
 
 There are several sources but the one that I used is [Weatherspark](https://weatherspark.com). Search for your location. Scroll to the bottom of the page to the Solar Energy section and note the figures for each month(the months are clickable!) in kWh/day which is the daily mean figure for the month. Feel free to use an alternate source that you trust but keep in mind the unit of measurment - **kWh/day**!
 
-Going forward, it will be great to extract live daily radiation data/forecast through an API instead of relying on historical averages.. hopefully will get there soon!
+Going forward, it will be great to extract live daily shortwave radiation data/forecast through an API instead of relying on historical averages.. hopefully will get there soon!
 
 | Key | Description | Default |
 | --- | --- | --- |
@@ -160,9 +160,9 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 - For any of the smart outlets/sockets you intend to use by following the zone states for driving irrigation valves, do setup an additional automation in Homekit to switch them off after a preset time - this can be a kind of failsafe in case the plugin crashes for any reason and leaves the zone turned on indefinately.<br>
 
-- The plugin pairs very well with multi-channel devices such as the 4CHPRO from Sonoff which has dry contacts to relay low voltage AC/DC to control solenoiod valves and has a wide operating voltage range. I use 2 of these mounted in an IP65 outdoor enclosure to run a 8-zone 12VDC configuration.
+- The plugin pairs very well with multi-channel devices such as the 4CHPRO from Sonoff which has dry contacts to relay low voltage AC/DC to control solenoid valves and has a wide operating voltage range. I use 2 of these mounted in an IP65 outdoor enclosure to run a 8-zone 12VDC configuration.
 
-- Homekit allows a maximum settable `on` time of `60` minutes for a `sprinkler`. If the watering requirement for a zone is more, one can sneak aruond this limitation by enabling multiple cycles, each being less than `60` minutes. `defDuration` & `maxDuration` are currently limited to `120` minutes but will gladly increase this if it is limiting many users.
+- Homekit allows a maximum settable `on` time of `60` minutes for a `sprinkler`. If the watering requirement for a zone is more, one can sneak around this limitation by enabling multiple cycles, each being less than `60` minutes. `defDuration` & `maxDuration` are currently limited to `120` minutes but will gladly increase this if it is limiting many users.
 
 - If you are using a zone to water a set of pots, each with a single drip emitter, a sensible way to configure would be to set `dripArea` as the area of a single pot and `dripNos` to `1`. The rest of the zone settings as per requriement.
 
@@ -176,7 +176,7 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 - [ ] The plugin uses [request](https://github.com/request/request) which is now deprecated - would like to transition to either [node-fetch](https://www.npmjs.com/package/node-fetch), [got](https://www.npmjs.com/package/got) or any other suitable one which is lightweight and easy to implement - help solicited!
 
-- [ ] Use live daily radiation data/forecast through an API instead of relying on having to feed historical averages.. the only  service I am aware of which has a free option is [Solcast](https://solcast.com/solar-radiation-data/) which offers 10 API calls a day. Any suggestions if its worth doing this?
+- [ ] Use live daily shortwave solar radiation data/forecast through an API instead of relying on having to feed historical averages.. the only  service I am aware of which has a free option is [Solcast](https://solcast.com/solar-radiation-data/) which offers 10 API calls a day. Any suggestions if its worth doing this?
 
 - [ ] Prettier HTML email notifications!?
 
@@ -188,4 +188,4 @@ I dont have a great deal of programming experience so the biggest help and contr
 
 If financial contribution is on your agenda, may I humbly redirect you to [Homebridge](https://github.com/nfarina/) which makes this community possible. Also consider supporting several fine developers who offer an incredible amount of their time and effort in supporting the community and creating extraordinary plugins.
 
-I use this plugin with Sonoff devices exposed by the fantastic [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) plugin from [Ben](https://github.com/sponsors/bwp91), who somehow manages to squeeze more than 24 hours in a day giving support and fixing bugs!
+I use this plugin with Sonoff devices exposed by the fantastic [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) plugin from [Ben](https://github.com/sponsors/bwp91), who somehow manages to squeeze more than 24 hours in a day giving support, adding features and fixing bugs!
