@@ -119,7 +119,7 @@ Going forward, it will be great to extract live daily radiation data/forecast th
 | `xxxRad` | Mean Daily Solar Radiation [kWh/day] for the month `xxx`| `6` |
 
 ## Zones setup
-This is where multiple zones can be configured - with a limit of `8 zones` at the moment. <i>There is no reason why more than 8 zones will not work so if this becomes a constraint, let me know and I will bump up this limi!</i><br>
+This is where multiple zones can be configured - with a limit of `8 zones` at the moment. <i>There is no reason why more than 8 zones will not work so if this becomes a constraint, let me know and I will bump up this limit!</i><br>
 > **Crop Coefficient** - [Read here for reference!](https://ucanr.edu/sites/UrbanHort/Water_Use_of_Turfgrass_and_Landscape_Plant_Materials/Plant_Factor_or_Crop_Coefficient__What’s_the_difference/)<br>
 This is based on the crop type or species and their water needs. [`0.1 - 0.9`]
 
@@ -130,9 +130,9 @@ This is based on the crop type or species and their water needs. [`0.1 - 0.9`]
 
 > **Exposure Factor**<br>
 > The microclimate or exposure factor [`0.5 - 1.4`]<br>
-Average--open field<br>
-Low--moderate wind, part sun<br>
-High--stronger winds and greater exposure<br>
+Average--open field: `1.0`<br>
+Low--moderate wind, part sun: `0.5 - 0.9`<br>
+High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 *A protected, shady location would use a lower factor.*
 
 | Key | Description | Default |
