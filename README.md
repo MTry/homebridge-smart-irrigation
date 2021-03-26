@@ -172,20 +172,18 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 ## Way forward..
 
-- [ ] Ensure the main service is set to `In Use` when a valve is active
+- [ ] Update `Remaining Duration` on the accessory
 
-- [ ] Update `Remaining Duration` accordingly
-
-- [ ] The plugin uses [request](https://github.com/request/request) which is now deprecated - would like to transition to either [node-fetch](https://www.npmjs.com/package/node-fetch), [got](https://www.npmjs.com/package/got) or any other sutable one which is lightweight and easy to implement - help solicited
+- [ ] The plugin uses [request](https://github.com/request/request) which is now deprecated - would like to transition to either [node-fetch](https://www.npmjs.com/package/node-fetch), [got](https://www.npmjs.com/package/got) or any other suitable one which is lightweight and easy to implement - help solicited!
 
 - [ ] Prettier HTML email notifications!?
 
-- [ ] Cuter logo!?
+- [ ] Appropriate logo!?
 
 ## Support/Contribution
 
-I dont have a great deal of programming experience so the biggest help and contribution you can make is helping with code or "Way forward.." items!
+I dont have a great deal of programming experience so the biggest help and contribution you can make is helping with the code or "Way forward.." items!
 
-If financial contribution is on your agenda, may I humbly redirect you to [Homebridge](https://github.com/nfarina/) which makes this community possible. Also consider supporting several fine developers who offer an incredible amount of their time and effort in supporting the community and creating fantastic plugins.
+If financial contribution is on your agenda, may I humbly redirect you to [Homebridge](https://github.com/nfarina/) which makes this community possible. Also consider supporting several fine developers who offer an incredible amount of their time and effort in supporting the community and creating extraordinary plugins.
 
-I use this plugin with Sonoff devices exposed by the fantastic [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) plugin from [Ben](https://github.com/sponsors/bwp91) who somehow manages to squeeze more than 24 hours in a day giving support and fixing bugs!
+I use this plugin with Sonoff devices exposed by the fantastic [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) plugin from [Ben](https://github.com/sponsors/bwp91), who somehow manages to squeeze more than 24 hours in a day giving support and fixing bugs!

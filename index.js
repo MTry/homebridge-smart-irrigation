@@ -357,6 +357,7 @@ SmartSprinklers.prototype = {
   setActive: function (zone, value, callback) {
         this.log('%s | Set state to %s', this.zones[zone-1].zoneName, value)
         this.valveAccessory[zone].getCharacteristic(Characteristic.InUse).updateValue(value)
+        this.service.getCharacteristic(Characteristic.InUse).updateValue(value)
         callback()
   },
 
