@@ -11,7 +11,7 @@
 
 This [homebridge](https://github.com/nfarina/homebridge) plugin exposes a multi-zone irrigation sprinkler <b>dummy control system</b> to Apple's [HomeKit](http://www.apple.com/ios/home/).
 
-Although a <i>dummy</i>, it brings smarts of a climate/plant adaptive irrigation controller with the use of [OpenWeatherMap API](https://openweathermap.org/api). All parameters can be configured from the configuration UI. 
+Although a <i>dummy</i>, it brings smarts of a climate/plant adaptive irrigation controller with the use of [OpenWeatherMap API](https://openweathermap.org/api). All parameters can be configured from the configuration UI and the plugin offers granular conrol specific to every zone's individual requirerments.
 
 The plugin can optionally email you with the watering schedule it has calculated, or when a watering run is completed, along with the next 7-day weather forecast.
 
@@ -27,7 +27,7 @@ Searching for an irrigation or sprinkler control plugin never showed any suitabl
 
 1. Install [homebridge](https://github.com/nfarina/homebridge#installation-details)
 2. Install this plugin: `npm install -g git+https://github.com/MTry/homebridge-smart-irrigation.git`
-3. Sign up at the [OpenWeatherMap API](https://openweathermap.org/api) and retrieve your API key (if you want scheduling). The free tier allows you 1000 API calls a day and this plugin will make only a couple!
+3. Sign up at the [OpenWeatherMap API](https://openweathermap.org/api) and retrieve your API key (if you want scheduling). The free tier allows  1000 API calls a day and this plugin will make only a couple!
 4. Gather the mean daily Solar Radiation figures for your location in kWh/day. Please read the settings section for more details
 5. Configure the settings
 
@@ -54,7 +54,18 @@ One of the primary factors affecting the water demand of plants is <b>evapotrans
 
 Additionally, information about the number of drip emitters, their discharge rate, area irrigated and efficiency is considered with the above factors.
 
-## Operating Logic
+## Operating Logic & Scheduling
+
+If `masterDisable` is not enabled, the plugin will check if watering can be completed today by however many minutes before sunrise  specified in `sunriseOffset` or else will schedule the irrigation for the next day. Regardless of `masterDisable` it will gather the weather information and also send a notification email if `emailEnable` is set.
+
+Forecasted low and high temperature higher than their respective thresholds must be met for the day being scheduled.
+
+If `adaptive` watering is disabled for a zone, but scheduling remains `enabled`, the zone will be watered based on the calculatd time, else for the number of minutes specified in `defDuration`.
+
+The plugin schedules asynchronous zone watering - cycling sequentially through all the scheduled zones needing water one at a time and repeats the process the number of times specified by `cycles`.
+
+Start times will vary daily as a result of changing sunrise times as well as the calculated watering time based on the weather factors.
+> `recheckTime` instructs the plugin to reassess the watering times based on the most current forecast available `15`, `30` or `60` minutes prior to the scheduled run - if this is of no use to you set it to `0`. But for many living in tropical regions where climate modeling is far too complex to give accurate forecasting, this can be helpful as the forecasts change frequently or significantly.
 
 1. Gather weather forecast for the next 7-day period
 2. Using the above and Solar Radiation data, calculate projected <b>ET<sub>o</sub></b> for the next 7 days
@@ -81,9 +92,9 @@ Additionally, information about the number of drip emitters, their discharge rat
 | `latitude` | Enter the latitude in decimals including '-' if in the southern hemisphere | N/A |
 | `longitude` | Your decimal longitude | N/A |
 | `altitude` | Enter the altitude in meters | `0` |
-|
+
 ## Email Notification Settings
-Currently this supports basic authentication. If using Gmail, you will need to go to the security settings to enable less secure app access. *It miight be best to create a specific ID for this purpose to avoid security risks to your main account!*
+Currently this supports basic authentication. If using Gmail, you will need to go to the security settings of your account to enable less secure app access. *It might be best to create a specific ID for this purpose to avoid security risks to your main account!*
 
 | Key | Description | Default |
 | --- | --- | --- |
@@ -96,15 +107,16 @@ Currently this supports basic authentication. If using Gmail, you will need to g
 | `portSecure` | Secure Port | `false` |
 | `userID` | SMTP Username | N/A |
 | `userPwd` | SMTP Password | N/A |
-|
+
 ## Monthly data of Mean Daily Solar Radiation [kWh/day]
 
-There are many sources but one that I used is [Weatherspark](https://weatherspark.com). Search for your location. Scroll to the bottom of the page to the Solar Energy section and note the figures for each month(the months are clickable!) in kWh/day which is the daily mean figure for the month. Feel free to use an alternate source that you trust but keep in mind the unit of measurment - **kWh/day**!
+There are several sources but one that I used is [Weatherspark](https://weatherspark.com). Search for your location. Scroll to the bottom of the page to the Solar Energy section and note the figures for each month(the months are clickable!) in kWh/day which is the daily mean figure for the month. Feel free to use an alternate source that you trust but keep in mind the unit of measurment - **kWh/day**!
+
+Going forward, it will be great to extract live daily radiation data/forecast through an API instead of relying on historical averages.. hopefully will get there soon!
 
 | Key | Description | Default |
 | --- | --- | --- |
 | `xxxRad` | Mean Daily Solar Radiation [kWh/day] for the month `xxx`| `6` |
-| 
 
 ## Zones setup
 This is where multiple zones can be configured - with a limit of `8 zones` at the moment.<br>
@@ -123,19 +135,18 @@ Low--moderate wind, part sun<br>
 High--stronger winds and greater exposure<br>
 *A protected, shady location would use a lower factor.*
 
-
 | Key | Description | Default |
 | --- | --- | --- |
 | `zoneName` | Friendly zone name | N/A |
 | `enabled` | Zone Enabled | `true` |
 | `adaptive` | Climate Adaptive Zone | `true` |
 | `rainFactoring` | Factor rain amount in watering & respect the set threshold to skip irrigation for this zone| `true` |
-| `defDuration` | Default zone duration in minutes when not adaptive [max `60`] | `20` |
-| `maxDuration` | Maximum duration settable in minutes [max `60`]| `30` |
+| `defDuration` | Default zone duration in minutes when not adaptive [max `120`] | `20` |
+| `maxDuration` | Maximum duration settable in minutes [max `120`]| `30` |
 | `rainThreshold` | Rain Threshold[`mm`] above which watering skipped for this zone | `2.5` |
 | `tweakFactor` | Tweak proposed watring in `%` [`max:200`] | `100` |
-| `dripLPH` | Drip emmiter discharge rate in LPH | `2` |
-| `dripNos` | Number of drip emmiters used in this zone | `1` |
+| `dripLPH` | Drip emitter discharge rate in LPH (of a single emitter)| `2` |
+| `dripNos` | Number of drip emitters used in this zone | `1` |
 | `dripArea` | Irrigation area in `m`<sup>`2`</sup>| `1` |
 | `efficiency` | Irrigation system efficiency  - usually `90%` for drip | `90` |
 | `cropCoef` | Crop Coefficient [`0.1 - 0.9`] | `0.5` |
@@ -143,42 +154,21 @@ High--stronger winds and greater exposure<br>
 | `expFactor` | Exposure Factor [`0.5 - 1.4`] | `1` |
 | `wateringWeekdays` | Weekdays to water - *at least 1!* | ALL |
 | `wateringMonths` | Watering Months - *uncheck to skip watering in that month* | ALL |
-|
 
-## Scheduling
+## Notes & Suggestions
 
-When scheduling is enabled, the plugin will see if watering can be completed today by however many minutes before sunrise  specified in `sunriseOffset`, if not, it will schedule the relevant time for the next day.
+- For any of the smart outlets/sockets you intend to use by following the zone states for driving irrigation valves, do setup an additional automation in Homekit to switch them off after a preset time - this can be a kind of failsafe in case the plugin crashes for any reason and leaves the zone turned on indefinately.<br>
 
-The day selected must match the following criteria for watering to place:
+- Homekit allows a maximum settable `on` time of `60` minutes for a `sprinkler`. If the watering requirement for a zone is more, one can sneak aruond this limitation by enabling multiple cycles, each being less than `60` minutes. `defDuration` & `maxDuration` are currently limited to `120` minutes but will gladly increase this if it is limiting many users.
 
-- Not a restricted day/month
-- Forecasted rain for today and tomorrow not higher than threshold
-- Forecasted low and high temperature higher than their respective thresholds
+- If you are using a zone to water a set of pots, each with a single drip emitter, a sensible way to configure would be to set `dripArea` as the area of a single pot and `dripNos` to `1`. The rest of the zone settings as per requriement. 
 
-If adaptive watering is disabled, but scheduling remains enabled, each zone will be watered for a percentage (specified in `zonePercentages`) of the number of minutes specified in `defaultDuration`
-
-The plugin schedules asynchronous zone watering times (no more than one zone on at a given time), as most systems are incapable of supplying sufficient pressure to water multiple zones simultaneously.
-
-Start times will vary daily as a result of changing sunrise times.
-
-## Adaptive watering
-
-When adaptive watering is enabled, a zone's total watering duration will be calculated as a percentage (specified in `zonePercentages`) of the calculation below:
-
-## Notes
-
-- If you are using scheduling, the sprinkler controller should have an onboard auto-shutoff feature where the valve will automatically close after a period of time (e.g. `30` minutes) has passed so that valves are not left open if there was an error receiving the 'off message' from the plugin
-
-- I am open to suggestions about new ways to calculate watering times for adaptive watering in place of the simple calculation currently implemented
-
-- The watering times displayed to you within the homebridge log are rounded to make reading them easier due to JavaScript's [floating point calculations](https://www.youtube.com/watch?v=PZRI1IfStY0). The real watering times are not rounded
-
-- Your API key grants you access to `1000` API calls per day. The plugin will only make an API call once per day (as well as whenever homebridge starts up) so you shouldn't need to worry about running out of API calls
-
-## To-do
+## Way forward..
 
 - [ ] Ensure the main service is set to `In Use` when a valve is active
 
-- [ ] Set `Program Mode` to manual when user manually overrides valve
+- [ ] Update `Remaining Duration` accordingly
 
-- [ ] Update `Remaining Duration` accordingly - for main service or for each valve?
+- [ ] The plugin uses [request](https://github.com/request/request) which is now deprecated - would like to transition to either [node-fetch](https://www.npmjs.com/package/node-fetch), [got](https://www.npmjs.com/package/got) or any other sutable one which is lightweight and easy to implement - help solicited
+
+- [ ] Prettier HTML email notifications!?

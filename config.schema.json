@@ -214,7 +214,7 @@
               "type": "number",
               "description": "Default zone duration in minutes [20][0-60]",
               "default": 20,
-              "maximum": 60,
+              "maximum": 120,
               "minimum": 0
             },
             "maxDuration": {
@@ -222,7 +222,7 @@
               "type": "number",
               "description": "Maximum duration settable in minutes [30][0-60]",
               "default": 30,
-              "maximum": 60,
+              "maximum": 120,
               "minimum": 0
             },
             "rainThreshold": {
