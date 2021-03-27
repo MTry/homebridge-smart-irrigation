@@ -206,8 +206,7 @@ SmartSprinklers.prototype = {
 
          var WaterNeeded = 0
          var wateringTime = new Array(this.zoned).fill(0)
-         var Today_ZonesDuration = new Array(this.zoned).fill(0)
-         var zoneTimes = [Today_ZonesDuration,Today_ZonesDuration]
+         var zoneTimes = [[],[]]
 
          for (var zDay = 0; zDay <= 1; zDay++){
           for ( var Z_index =0; Z_index <= this.zoned-1; Z_index++) {
