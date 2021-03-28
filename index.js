@@ -9,8 +9,7 @@ async function sendEmail(transport,matter)
   {
   let transporter = nodemailer.createTransport(transport)
   let info = await transporter.sendMail(matter)
-  console.log("Message sent: %s", info.messageId)
-  //console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info))
+  //console.log("Message sent: %s", info.messageId)
   }
 
 var mailTransport = {}
@@ -97,6 +96,7 @@ SmartSprinklers.prototype = {
   },
 
   _calculateSchedule: function (callback) {
+    for (const job in schedule.scheduledJobs) schedule.cancelJob(job)
     var url = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + this.latitude + '&lon=' + this.longitude + '&exclude=current,hourly&units=metric&appid=' + this.keyAPI
     this.log.debug('Retrieving weather data: %s', url)
     this._httpRequest(url, '', this.http_method, function (error, response, responseBody) {
@@ -292,10 +292,13 @@ SmartSprinklers.prototype = {
             schedule.scheduleJob(recheck, function () {
               this._calculateSchedule(function () {})
             }.bind(this))
+            this.log('------------------------------------------------')
             this.log('Reassessment: %s %s', Weekday[recheck.getDay()], recheck.toLocaleString())
             waterMail = waterMail + "Reassessment: " + Weekday[recheck.getDay()].substring(0,3) + " " + recheck.toLocaleString() + "\n"
-          } else {this.log('No further reassessment before schedule!')
-          waterMail = waterMail + "No further reassessment before schedule.\n"
+          } else {
+            this.log('------------------------------------------------')
+            this.log('No further reassessment before schedule!')
+            waterMail = waterMail + "No further reassessment before schedule.\n"
           }
           
           schedule.scheduleJob(startTime, function () {
