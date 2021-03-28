@@ -2,7 +2,7 @@
   "private": false,
   "displayName": "Homebridge Smart Irrigation",
   "name": "homebridge-smart-irrigation",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Adaptive Climate based Irrigation control of sprinklers.",
   "license": "MIT",
   "_requiredBy": [
@@ -18,7 +18,7 @@
   "homepage": "https://github.com/MTry/homebridge-smart-irrigation#readme",
   "engines": {
     "homebridge": ">=0.4.50",
-    "node": ">=12.13.0"
+    "node": ">=10.0.0"
   },
   "main": "index.js",
   "scripts": {
