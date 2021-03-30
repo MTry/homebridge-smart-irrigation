@@ -8,8 +8,9 @@ const nodemailer = require("nodemailer")
 async function sendEmail(transport,matter)
   {
   let transporter = nodemailer.createTransport(transport)
-  let info = await transporter.sendMail(matter)
-  //console.log("Message sent: %s", info.messageId)
+  try {await transporter.sendMail(matter)}
+  catch (mailError){ 
+    throw new TypeError('Smart Irrigation email not sent - recheck email config settings. Moving ahead...')}
   }
 
 var mailTransport = {}
@@ -110,6 +111,8 @@ SmartSprinklers.prototype = {
         this.log.debug('Weather data: %s', responseBody)
         try {
           var json = JSON.parse(responseBody)
+          var errCode = json.cod || 0
+          if (errCode != 0) throw "Error with API call - Code: " + errCode
         } catch (error) {
           setTimeout(() => {
             this._calculateSchedule(function () {})
