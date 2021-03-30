@@ -10,7 +10,7 @@ async function sendEmail(transport,matter)
   let transporter = nodemailer.createTransport(transport)
   try {await transporter.sendMail(matter)}
   catch (mailError){ 
-    throw new TypeError('Smart Irrigation email not sent - recheck email config settings. Moving ahead...')}
+  throw new TypeError('Smart Irrigation email not sent - recheck email config settings. Moving ahead...')}
   }
 
 var mailTransport = {}
