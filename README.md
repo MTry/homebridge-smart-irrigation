@@ -31,16 +31,16 @@ Searching for an irrigation or sprinkler control plugin never showed any suitabl
 
 1. Install [Homebridge](https://github.com/nfarina/homebridge#installation-details)
 2. Install this plugin: `npm install -g homebridge-smart-irrigation`
-3. Sign up at the [OpenWeatherMap API](https://openweathermap.org/api) and retrieve your API key (if you want scheduling). The free tier allows  1000 API calls a day and this plugin will make no more than a couple on any day!
+3. Sign up at the [OpenWeatherMap website](https://openweathermap.org/api) and retrieve your API key (if you want adaptive control). The free tier allows 1000 API calls a day and this plugin will make no more than a couple on any day!
 4. Gather the mean daily Solar Radiation figures for your location in kWh/day. Please read the settings section for more details
 5. Configure the settings
-6. Use the Eve app or another Homekit controller app to setup automations for your smartplug or outlet to follow the state of the zones exposed by the plugin
+6. Use the Eve app or any other Homekit controller app to setup automations for your smartplug or outlet to follow the state of the zones exposed by the plugin
 
 ## Operating Principle
 
 One of the primary factors affecting the water demand of plants is <b>evapotranspiration</b>, also denoted as <b>ET<sub>o</sub></b> and expressed in <i>mm</i>. While the subject of irrigation is one of extensive global research and there is no end to the extent of complication one can end up with, this plugin chooses to focus on three - <b>ET<sub>o</sub></b>, <b>local rain</b> and the <b>crop characteristics</b> of each of the zones configured. 
 
-<b>ET<sub>o</sub></b> is calculated using the [<i>Penman-Monteith Evapotranspiration (FAO-56 Method)</i>](https://edis.ifas.ufl.edu/pdffiles/ae/ae45900.pdf). Those interested in a deeper understanding of the principles may head to this excellent resource of [FAO](http://www.fao.org/3/X0490E/x0490e00.htm#Contents). The factors used include the following <b><i>(daily)</i></b>:
+<b>ET<sub>o</sub></b> is calculated using the [<i>Penman-Monteith Evapotranspiration (FAO-56) Method</i>](https://edis.ifas.ufl.edu/pdffiles/ae/ae45900.pdf). Those interested in a deeper understanding of the principles may head to this excellent resource of [FAO](http://www.fao.org/3/X0490E/x0490e00.htm#Contents). The factors used include the following <b><i>(daily)</i></b>:
 1. Min/Max Temperatures
 2. Mean RH
 3. Wind speed
@@ -85,12 +85,12 @@ Start times will vary daily as a result of changing sunrise times as well as the
 
 | Key | Description | Default |
 | --- | --- | --- |
-| `name` | Name to appear in the Home app | N/A |
+| `name` | Name that appears in the Home app | N/A |
 | `verbosed` | Verbose Calculations and Extended Climate data | `true` |
 | `masterDisable` | Disable scheduling all irrigation | `false` |
 | `recheckTime` | Reassess - minutes before runtime | `0` |
 | `cycles` | Number of cycles per watering run | `2` |
-| `sunriseOffset` | Minutes before the sunrise watering should get over by | `0` |
+| `sunriseOffset` | Minutes before sunrise that watering should get over by | `0` |
 | `lowThreshold` | Skip scheduling when forecasted minimum temperature falls below this | `10` |
 | `highThreshold` | Skip scheduling when forecasted maximum temperature stays below this | `20` |
 | `keyAPI` | Your OpenWeatherMap API Key | N/A |
@@ -164,27 +164,27 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 - For any of the smart outlets/sockets you intend to use by following the zone states for driving irrigation valves, do setup an additional automation in Homekit to switch them off after a preset time - this can be a kind of failsafe in case the plugin crashes for any reason and leaves the zone turned on indefinately.<br>
 
-- The plugin pairs very well with multi-channel devices such as the 4CHPRO from Sonoff which has dry contacts to relay low voltage AC/DC to control solenoid valves and has a wide operating voltage range. I use 2 of these mounted in an IP65 outdoor enclosure to run a 8-zone 12VDC configuration. The plugin used to expose the 4CHPRO is [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) plugin from [Ben](https://github.com/sponsors/bwp91), who somehow manages to squeeze more than 24 hours in a day giving support, adding features and fixing bugs!
+- The plugin pairs very well with multi-channel devices such as the 4CHPRO from Sonoff which has dry contacts to relay low voltage AC/DC to control solenoid valves and also has a wide operating voltage range. I use 2 of these mounted in an IP65 outdoor enclosure to run a 8-zone 12VDC configuration. The plugin used to expose the 4CHPRO is [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) plugin from [Ben](https://github.com/sponsors/bwp91), who somehow manages to squeeze more than 24 hours in a day giving support, adding features and fixing bugs!
 
 - Homekit allows a maximum settable `on` time of `60` minutes for a `sprinkler`. If the watering requirement for a zone is more, one can sneak around this limitation by enabling multiple cycles, each being less than `60` minutes. `defDuration` & `maxDuration` are currently limited to `120` minutes but will gladly increase this if it is limiting many users.
 
-- If you are using a zone to water a set of pots, each with a single drip emitter, a sensible way to configure would be to set `dripArea` as the area of a single pot and `dripNos` to `1`. The rest of the zone settings as per requriement.
+- If you are using a zone to water a set of pots, each with a single drip emitter, a reasonable way to configure would be to set `dripArea` as the area of a single pot and `dripNos` to `1`. The rest of the zone settings to be configured as per requriement.
 
-- If you are using a zone to water in a protected space, consider disabling `rainFactoring` for that zone - since the plants never receive any rain water, and the reduction in  <b>ET<sub>o</sub></b> is already factored in calculating the zone timing, you should be good to go!
+- If you are using a zone to water in a protected space, consider disabling `rainFactoring` for that zone - since the plants never receive any rainfall, and the reduction in  <b>ET<sub>o</sub></b> is already factored in calculating the zone timing, you should be good to go!
 
-- Use `tweakFactor` to modulate what the system calculates as the requirement for a zone. Do start with 100%, which means no change and then go lower or higher based on wether you feel the system is overestimating or underestimating the zone's water requirement.
+- Use `tweakFactor` to modulate what the system calculates as the requirement for a zone. Do start with 100%, which means no change and then go lower or higher based on whether you feel the system is overestimating or underestimating the zone's water requirement.
 
 ## Way forward..
 
-- [ ] Update `Remaining Duration` on the accessory
+- [ ] Update `Remaining Duration` on the accessory/service - or an alternate way to show how much time is remaining
 
 - [ ] The plugin uses [request](https://github.com/request/request) which is now deprecated - would like to transition to either [node-fetch](https://www.npmjs.com/package/node-fetch), [got](https://www.npmjs.com/package/got) or any other suitable one which is lightweight and easy to implement - help solicited!
 
 - [ ] Use live daily shortwave solar radiation data/forecast through an API instead of relying on having to feed historical averages.. the only  service I am aware of which has a free option is [Solcast](https://solcast.com/solar-radiation-data/) which offers 10 API calls a day. Any suggestions if its worth doing this?
 
-- [ ] Prettier HTML email notifications!?
+- [ ] Push messages to indicate start and completion of scheduled irrigation
 
-- [ ] Appropriate logo!?
+- [ ] Prettier HTML email notifications!
 
 ## Support/Contribution
 
