@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://github.com/MTry/homebridge-smart-irrigation/blob/master/img/smartIrrigation.png" height="140"></a>
+  <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://github.com/MTry/homebridge-smart-irrigation/blob/master/branding/logo.png" height="150"></a>
 </p>
 
 <span align="center">
@@ -12,6 +12,8 @@
 ## Description
 
 This [Homebridge](https://github.com/nfarina/homebridge) plugin exposes a multi-zone irrigation sprinkler <b>dummy control system</b> to Apple's [HomeKit](http://www.apple.com/ios/home/).
+
+Turn any electrical irrigation valve into a smart-valve!
 
 Although a <i>dummy</i>, it brings smarts of an <b>evapotranspiration</b>[<b>ET<sub>o</sub></b>] based climate/plant adaptive irrigation controller with the use of [OpenWeatherMap API](https://openweathermap.org/api). All parameters can be configured from the Homebridge UI and the plugin offers granular control specific to every zone's individual requirerments.
 
