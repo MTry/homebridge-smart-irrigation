@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://github.com/MTry/homebridge-smart-irrigation/blob/master/branding/logo.png" height="150"></a>
+  <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/logo.png" height="160"></a>
 </p>
 
 <span align="center">
@@ -20,17 +20,19 @@ Although a <i>dummy</i>, it brings smarts of an <b>evapotranspiration</b>[<b>ET<
 The plugin can optionally email you with the watering schedule it has calculated, or when a watering run is completed, along with the next 7-day weather forecast.
 
 ## Why?
-Searching for an irrigation or sprinkler control plugin never showed any suitable option for my needs. The one that came closest, and is the ***inspiration and basis*** for this plugin is [Tom Rodrigues's](https://github.com/Tommrodrigues) [homebridge-web-sprinklers](https://github.com/Tommrodrigues/homebridge-web-sprinklers). But like many others, I didn't have the http hardware for it to control, or the inclination to rig it! What I did have access to, were some solenoid valves which I could power from a smart socket that was exposed to Homekit. So I stripped the code to just expose the dummy sprinkler accessories, reworked the irrigation logic - and then, one thing led to another.. in my quest to achieve a more granular control and incorporate more irrigation science to create a climate adaptive irrigation controller.
+Searching for an irrigation or sprinkler control plugin never showed any suitable option for my needs. The one that came closest, and is the ***inspiration and basis*** for this plugin is [Tom Rodrigues's](https://github.com/Tommrodrigues) [homebridge-web-sprinklers](https://github.com/Tommrodrigues/homebridge-web-sprinklers). But like many others, I didn't have the http hardware for it to control, or the inclination to rig it! What I did have access to, were some solenoid valves which I could power from a smart socket that was exposed to Homekit. So I stripped the code to just expose the dummy sprinkler accessories, reworked the irrigation logic - and then, one thing led to another.. in my quest to achieve a more granular control and incorporate more irrigation science to create a *climate adaptive irrigation controller*.
 
 ## Basic use case..
-1. Configure the plugin with your parameters to expose the required number sprinkler accessories(zones)
+1. Configure the plugin to expose the required number sprinkler accessories(zones)
 2. Use the Eve app or another Homekit controller app to configure ***ANY*** other smart plug or outlet in your Homekit ecosystem to follow the state of the above exposed sprinklers
-3. The smartplug/outlet/valve in their simplest configuration could be just driving the power of any solenoid valve that controls watering to a zone!
+3. The smartplug/outlet/valve in their simplest configuration could be just driving the power of any solenoid valve that controls watering to a zone
 
 ## Installation
 
 1. Install [Homebridge](https://github.com/nfarina/homebridge#installation-details)
-2. Install this plugin: `npm install -g homebridge-smart-irrigation`
+2. Install this plugin: 
+    - **Within Homebridge:** Search for ***homebridge-smart-irrigation*** plugin and install
+    - **Manually:** Run `sudo npm install -g homebridge-smart-irrigation` from the terminal
 3. Sign up at the [OpenWeatherMap website](https://openweathermap.org/api) and retrieve your API key (if you want adaptive control). The free tier allows 1000 API calls a day and this plugin will make no more than a couple on any day!
 4. Gather the mean daily Solar Radiation figures for your location in kWh/day. Please read the settings section for more details
 5. Configure the settings
@@ -76,10 +78,130 @@ Start times will vary daily as a result of changing sunrise times as well as the
 2. Using the above and Solar Radiation data, calculate projected <b>ET<sub>o</sub></b> for the next 7 days
 3. If the zone is `enabled` & `adaptive`, calculate the total <b>ET<sub>o</sub></b> until the next watering day
 4. If `rainFactoring` is enabled, calculate the total projected rainfall till the zone's next watering day
-5. Calculate the net irrigation requirement based on total <b>ET<sub>o</sub></b> and total rain till the zone's next watering
+5. Calculate the net irrigation requirement of a zone based on total <b>ET<sub>o</sub></b> and total rain ***till the zone's next watering schedule***
 6. Calculate zone specific time required based on that zone's irrigation infrastructure and crop profile
 7. Schedule the watering run and send notification email if `emailEnable`
 8. Reassess `recheckTime` minutes before the scheduled run
+
+## Example config block:
+
+```json
+{
+            "accessory": "SmartSprinklers",
+            "name": "Irrigation",
+            "verbosed": true,
+            "masterDisable": false,
+            "recheckTime": 15,
+            "latitude": 25.009243,
+            "longitude": 77.73491,
+            "altitude": 390,
+            "keyAPI": "yOuR_OWM_key",
+            "cycles": 2,
+            "sunriseOffset": 0,
+            "lowThreshold": 8,
+            "highThreshold": 18,
+            "emailEnable": true,
+            "senderName": "💦 Irrigation Control",
+            "senderEmail": "someone@yourmail.com",
+            "sendTo": "someone@yourmail.com",
+            "smtpHost": "smtp.gmail.com",
+            "smtpPort": 587,
+            "portSecure": false,
+            "userID": "someone@yourmail.com",
+            "userPwd": "password",
+            "JanRad": 5.4,
+            "FebRad": 6.3,
+            "MarRad": 7,
+            "AprRad": 7.3,
+            "MayRad": 7.2,
+            "JunRad": 5.7,
+            "JulRad": 5,
+            "AugRad": 5.1,
+            "SepRad": 5.5,
+            "OctRad": 5.7,
+            "NovRad": 5.2,
+            "DecRad": 5,
+            "zones": [
+                {
+                    "zoneName": "Flowerbed",
+                    "enabled": true,
+                    "adaptive": true,
+                    "rainFactoring": true,
+                    "defDuration": 30,
+                    "maxDuration": 60,
+                    "rainThreshold": 2.5,
+                    "tweakFactor": 100,
+                    "dripLPH": 8,
+                    "dripNos": 23,
+                    "dripArea": 2.7,
+                    "efficiency": 100,
+                    "cropCoef": 0.6,
+                    "plantDensity": 1.1,
+                    "expFactor": 1,
+                    "wateringMonths": [
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec"
+                    ],
+                    "wateringWeekdays": [
+                        "Sunday",
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday",
+                        "Saturday"
+                    ]
+                },
+                {
+                    "zoneName": "Pots",
+                    "enabled": true,
+                    "adaptive": true,
+                    "rainFactoring": true,
+                    "defDuration": 10,
+                    "maxDuration": 30,
+                    "rainThreshold": 2.5,
+                    "tweakFactor": 100,
+                    "dripLPH": 2,
+                    "dripNos": 1,
+                    "dripArea": 0.05,
+                    "efficiency": 100,
+                    "cropCoef": 0.6,
+                    "plantDensity": 0.5,
+                    "expFactor": 0.9,
+                    "wateringMonths": [
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec"
+                    ],
+                    "wateringWeekdays": [
+                        "Sunday",
+                        "Tuesday",
+                        "Thursday",
+                        "Friday"
+                    ]
+                }
+            ]
+        }
+```
 
 ## Primary Settings
 
@@ -177,8 +299,6 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 ## Way forward..
 
 - [ ] Update `Remaining Duration` on the accessory/service - or an alternate way to show how much time is remaining
-
-- [ ] The plugin uses [request](https://github.com/request/request) which is now deprecated - would like to transition to either [node-fetch](https://www.npmjs.com/package/node-fetch), [got](https://www.npmjs.com/package/got) or any other suitable one which is lightweight and easy to implement - help solicited!
 
 - [ ] Use live daily shortwave solar radiation data/forecast through an API instead of relying on having to feed historical averages.. the only  service I am aware of which has a free option is [Solcast](https://solcast.com/solar-radiation-data/) which offers 10 API calls a day. Any suggestions if its worth doing this?
 
