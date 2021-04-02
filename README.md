@@ -31,7 +31,7 @@ Searching for an irrigation or sprinkler control plugin never showed any suitabl
 
 1. Install [Homebridge](https://github.com/nfarina/homebridge#installation-details)
 2. Install this plugin: 
-    - **Within Homebridge:** Search for ***homebridge-smart-irrigation*** plugin and install
+    - **Homebridge Config UI X:** Search for ***homebridge-smart-irrigation*** plugin and install
     - **Manually:** Run `sudo npm install -g homebridge-smart-irrigation` from the terminal
 3. Sign up at the [OpenWeatherMap website](https://openweathermap.org/api) and retrieve your API key (if you want adaptive control). The free tier allows 1000 API calls a day and this plugin will make no more than a couple on any day!
 4. Gather the mean daily Solar Radiation figures for your location in kWh/day. Please read the settings section for more details
@@ -246,7 +246,7 @@ Going forward, it will be great to extract live daily shortwave radiation data/f
 | `xxxRad` | Mean Daily Solar Radiation [kWh/day] for the month `xxx`| `6` |
 
 ## Zones setup
-This is where multiple zones can be configured - with a limit of `8 zones` at the moment. <i>There is no reason why more than 8 zones will not work so if this becomes a constraint, let me know and I will bump up this limit!</i><br>
+This is where multiple zones can be configured - with a limit of `16 zones` at the moment.
 > **Crop Coefficient** - [Read here for reference!](https://ucanr.edu/sites/UrbanHort/Water_Use_of_Turfgrass_and_Landscape_Plant_Materials/Plant_Factor_or_Crop_Coefficient__What’s_the_difference/)<br>
 This is based on the crop type or species and their water needs. [`0.1 - 0.9`]
 
@@ -268,8 +268,8 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 | `enabled` | Zone Enabled | `true` |
 | `adaptive` | Climate Adaptive Zone | `true` |
 | `rainFactoring` | Factor rain amount in watering & respect the set threshold to skip irrigation for this zone| `true` |
-| `defDuration` | Default zone duration in minutes when not adaptive [max `120`] | `20` |
-| `maxDuration` | Maximum duration settable in minutes [max `120`]| `30` |
+| `defDuration` | Default zone duration in minutes when not adaptive [max `180`] | `20` |
+| `maxDuration` | Maximum duration settable in minutes [max `180`]| `30` |
 | `rainThreshold` | Rain Threshold[`mm`] above which watering skipped for this zone | `2.5` |
 | `tweakFactor` | The *human* factor to *tweak* proposed watering in `%` [`max:200`] | `100` |
 | `dripLPH` | Drip emitter discharge rate in LPH (of a single emitter)| `2` |
@@ -288,7 +288,7 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 - The plugin pairs very well with multi-channel devices such as the 4CHPRO from Sonoff which has dry contacts to relay low voltage AC/DC to control solenoid valves and also has a wide operating voltage range. I use 2 of these mounted in an IP65 outdoor enclosure to run a 8-zone 12VDC configuration. The plugin used to expose the 4CHPRO is [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) plugin from [Ben](https://github.com/sponsors/bwp91), who somehow manages to squeeze more than 24 hours in a day giving support, adding features and fixing bugs!
 
-- Homekit allows a maximum settable `on` time of `60` minutes for a `sprinkler`. If the watering requirement for a zone is more, one can sneak around this limitation by enabling multiple cycles, each being less than `60` minutes. `defDuration` & `maxDuration` are currently limited to `120` minutes but will gladly increase this if it is limiting many users.
+- Maximum run time up to 5 hours with each zone upto 3 hours can be set. `defDuration` & `maxDuration` can be upto `180` minutes.
 
 - If you are using a zone to water a set of pots, each with a single drip emitter, a reasonable way to configure would be to set `dripArea` as the area of a single pot and `dripNos` to `1`. The rest of the zone settings to be configured as per requriement.
 
@@ -296,13 +296,13 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 - Use `tweakFactor` to modulate what the system calculates as the requirement for a zone. Do start with 100%, which means no change and then go lower or higher based on whether you feel the system is overestimating or underestimating the zone's water requirement.
 
+- The `Set Duration` of the service is set at the total watering duration on every calculation. The individual zones are set at the corrresponding zone's ***single-cycle time***. When the watering run starts, the `Remaining Duration` of the service counts down to `0` through the runtime while the active zone displays the `Remaining Duration` of that cycle.
+
 ## Way forward..
 
-- [ ] Update `Remaining Duration` on the accessory/service - or an alternate way to show how much time is remaining
+- [ ] Push messages to indicate start and completion of scheduled irrigation
 
 - [ ] Use live daily shortwave solar radiation data/forecast through an API instead of relying on having to feed historical averages.. the only  service I am aware of which has a free option is [Solcast](https://solcast.com/solar-radiation-data/) which offers 10 API calls a day. Any suggestions if its worth doing this?
-
-- [ ] Push messages to indicate start and completion of scheduled irrigation
 
 - [ ] Prettier HTML email notifications!
 

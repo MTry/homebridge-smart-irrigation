@@ -16,6 +16,8 @@ async function sendEmail(transport,matter)
 var mailTransport = {}
 var mailContruct = {}
 var wateringDone = false
+var servicetimeEnd = 0
+var zoneEnd = new Array(8).fill(0)
 
 function minTommss(minutes){
  var sign = minutes < 0 ? "-" : "";
@@ -124,7 +126,6 @@ SmartSprinklers.prototype = {
             forecast[pop].ETO = 0
           }
           
-          var EToDay = forecast[0]
           var alt = this.altitude
           var lat = this.latitude
           
@@ -233,13 +234,15 @@ SmartSprinklers.prototype = {
           }
           var startTime = new Date(forecast[zDay].sunrise.getTime() - (wateringTime[zDay] + this.sunriseOffset) * 60000)
           var finishTime = new Date(startTime.getTime() + wateringTime[zDay] * 60000)
+          servicetimeEnd = finishTime.getTime()
 
           if (startTime.getTime() > Date.now() && !this.masterDisable && this.highThreshold < forecast[zDay].max && this.lowThreshold < forecast[zDay].min && wateringTime[zDay] != 0) 
           {
             for (var zone = 1; zone <= this.zoned; zone++) {
             this.zoneDuration[zone] = zoneTimes[zDay][zone-1] / this.cycles
             }
-            
+            this.service.getCharacteristic(Characteristic.SetDuration).updateValue(wateringTime[zDay]*60)
+ 
             this.log('------------------------------------------------')
             this.log('Watering starts: %s', Weekday[startTime.getDay()].substring(0,3), startTime.toLocaleString())
             this.log('Watering finishes: %s', Weekday[finishTime.getDay()].substring(0,3), finishTime.toLocaleString())
@@ -255,9 +258,11 @@ SmartSprinklers.prototype = {
             for (zone = 1; zone <= this.zoned; zone++) {
               if (this.zoneDuration[zone] != 0){
                 this.log('%s | %s minutes | %sx %s minute cycles', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles), this.cycles, minTommss(this.zoneDuration[zone]))
+                this.valveAccessory[zone].getCharacteristic(Characteristic.SetDuration).updateValue(this.zoneDuration[zone] * 60)
                 waterMail = waterMail + this.zones[zone-1].zoneName + ": " + minTommss(this.zoneDuration[zone] * this.cycles) + " minutes  |  " + this.cycles + " x " + minTommss(this.zoneDuration[zone]) + " min. cycles\n"
               } else {
                 this.log('%s | %s minutes |     NO WATERING', this.zones[zone-1].zoneName, minTommss(this.zoneDuration[zone] * this.cycles))  
+                this.valveAccessory[zone].getCharacteristic(Characteristic.SetDuration).updateValue(0)
                 waterMail = waterMail + this.zones[zone-1].zoneName + ":     NO WATERING\n"
               }
             }
@@ -294,8 +299,8 @@ SmartSprinklers.prototype = {
             this.log('------------------------------------------------')
             this.log('No schedule set, recalculation: %s', forecast[zDay].sunrise.toLocaleString())
             this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(0)
-            if (wateringDone) {mailSubject = "✅ Watering finished | " + "🚫 No Irrigation Scheduled ⏱"}
-            else {mailSubject = "🚫 No Irrigation Scheduled ⏱"}
+            if (wateringDone) {mailSubject = "✅ Watering finished | " + "🚫 No Irrigation Scheduled"}
+            else {mailSubject = "🚫 No Irrigation Scheduled"}
             waterMail = "----------------------------------------------------------\n" + "No schedule set. Recalculation set for:\n"
             waterMail = waterMail + Weekday[forecast[zDay].sunrise.getDay()] + ", " + forecast[zDay].sunrise.toLocaleString() + "\n"
             waterMail = waterMail + "----------------------------------------------------------\n" + "----------------------FORECAST--------------------\n"
@@ -321,7 +326,10 @@ SmartSprinklers.prototype = {
   },
 
   _wateringCycle: function (zone, cycle) {
-    if (this.zoneDuration[zone] != 0) {this.valveAccessory[zone].setCharacteristic(Characteristic.Active, 1)}
+    if (this.zoneDuration[zone] != 0) {
+      this.valveAccessory[zone].setCharacteristic(Characteristic.Active, 1)
+      zoneEnd[zone] = Date.now() + (this.zoneDuration[zone] * 60000)
+      }
     setTimeout(() => {
       if (this.zoneDuration[zone] != 0) {this.valveAccessory[zone].setCharacteristic(Characteristic.Active, 0)}
       var nextZone = zone + 1
@@ -344,14 +352,54 @@ SmartSprinklers.prototype = {
   setActive: function (zone, value, callback) {
         this.log('%s | Set state to %s', this.zones[zone-1].zoneName, value)
         this.valveAccessory[zone].getCharacteristic(Characteristic.InUse).updateValue(value)
-        this.service.getCharacteristic(Characteristic.InUse).updateValue(value)
+        this.service.getCharacteristic(Characteristic.InUse).updateValue(value)            
         callback()
   },
+
+  zoneRemainingTime: function (zone, callback) {
+    if (this.valveAccessory[zone].getCharacteristic(Characteristic.InUse).value) {
+      const remaining = Math.floor((zoneEnd[zone] - Date.now())/1000)
+      if (remaining < 0) {
+        callback(null, 0)
+      } else {
+        callback(null, remaining)
+      }
+    } else {
+      callback(null, 0)
+    }
+  },
+
+  serviceRemainingTime(callback) {
+      if (this.service.getCharacteristic(Characteristic.InUse).value) {
+        const remaining = Math.floor((servicetimeEnd - Date.now())/1000)
+        if (remaining < 0) {
+          callback(null, 0)
+        } else {
+          callback(null, remaining)
+        }
+      } else {
+        callback(null, 0)
+      }
+    },
 
   getServices: function () {
     this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(0)
     this.service.getCharacteristic(Characteristic.Active).updateValue(1)
     this.service.getCharacteristic(Characteristic.InUse).updateValue(0)
+    this.service.getCharacteristic(Characteristic.SetDuration).updateValue(0)
+    this.service.getCharacteristic(Characteristic.RemainingDuration).updateValue(0)
+    
+    this.service
+      .getCharacteristic(Characteristic.RemainingDuration)
+      .setProps({maxValue: 18000})
+    
+      this.service
+      .getCharacteristic(Characteristic.SetDuration)
+      .setProps({maxValue: 18000})
+      
+    this.service
+      .getCharacteristic(Characteristic.RemainingDuration)
+      .on('get', this.serviceRemainingTime.bind(this))
 
     this.informationService = new Service.AccessoryInformation()
     this.informationService
@@ -359,10 +407,11 @@ SmartSprinklers.prototype = {
       .setCharacteristic(Characteristic.Model, this.model)
       .setCharacteristic(Characteristic.SerialNumber, this.serial)
       .setCharacteristic(Characteristic.FirmwareRevision, this.firmware)
-
+    
     var services = [this.informationService, this.service]
     for (var zone = 1; zone <= this.zoned; zone++) {
       var accessory = new Service.Valve(this.zones[zone-1].zoneName, zone)
+
       accessory
         .setCharacteristic(Characteristic.ServiceLabelIndex, zone)
         .setCharacteristic(Characteristic.ValveType, 1)
@@ -371,7 +420,20 @@ SmartSprinklers.prototype = {
         .getCharacteristic(Characteristic.Active)
         .on('set', this.setActive.bind(this, zone))
 
+      accessory
+        .getCharacteristic(Characteristic.RemainingDuration)
+        .on('get', this.zoneRemainingTime.bind(this, zone));
+
       this.valveAccessory[zone] = accessory
+
+      this.valveAccessory[zone]
+        .getCharacteristic(Characteristic.RemainingDuration)
+        .setProps({maxValue: 7200})
+
+      this.valveAccessory[zone]
+        .getCharacteristic(Characteristic.SetDuration)
+        .setProps({maxValue: 7200})
+
       this.service.addLinkedService(accessory)
       services.push(accessory)
     }

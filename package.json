@@ -2,7 +2,7 @@
   "private": false,
   "displayName": "Homebridge Smart Irrigation",
   "name": "homebridge-smart-irrigation",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Adaptive Climate based multi-zone Irrigation control of Sprinklers.",
   "license": "MIT",
   "_requiredBy": [
