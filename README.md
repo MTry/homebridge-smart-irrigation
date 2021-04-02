@@ -296,7 +296,7 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 - Use `tweakFactor` to modulate what the system calculates as the requirement for a zone. Do start with 100%, which means no change and then go lower or higher based on whether you feel the system is overestimating or underestimating the zone's water requirement.
 
-- The `Set Duration` of the service is set at the total watering duration on every calculation. The individual zones are set at the corrresponding zone's ***single-cycle time***. When the watering run starts, the `Remaining Duration` of the service counts down to `0` through the runtime while the active zone displays the `Remaining Duration` of that cycle.
+- The `Set Duration` of the service is set at the total watering duration on every calculation. The individual zones are set at the corresponding zone's ***single-cycle time***. When the watering run starts, the `Remaining Duration` of the service counts down to `0` through the runtime while the active zone displays the `Remaining Duration` of that cycle.
 
 ## Way forward..
 
