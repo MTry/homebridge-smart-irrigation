@@ -293,7 +293,7 @@ SmartSprinklers.prototype = {
             mailContruct.text = waterMail + "----------------------------------------------------------\n" + "----------------------FORECAST--------------------\n" + forecastMail
             wateringDone = false
             if (this.emailEnable) {
-              sendEmail(mailTransport, mailContruct).catch(err => {this.log('Error: ', err.message)})
+              sendEmail(mailTransport, mailContruct).then(res => {this.log("Email Notification Sent")}).catch(err => {this.log('Error: ', err.message)})
               }
           } else {
             this.log('------------------------------------------------')
@@ -308,7 +308,7 @@ SmartSprinklers.prototype = {
             mailContruct.subject = mailSubject
             wateringDone = false
             if (this.emailEnable) {
-              sendEmail(mailTransport, mailContruct).catch(err => {this.log('Error: ', err.message)})
+              sendEmail(mailTransport, mailContruct).then(res => {this.log("Email Notification Sent")}).catch(err => {this.log('Error: ', err.message)})
               }          schedule.scheduleJob(forecast[zDay].sunrise, function () {
               this._calculateSchedule(function () {})
             }.bind(this))
