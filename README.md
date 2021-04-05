@@ -5,7 +5,6 @@
 <span align="center">
 
 # Homebridge Smart Irrigation
-
 [![npm](https://img.shields.io/npm/dt/homebridge-smart-irrigation?style=plastic)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![npm](https://img.shields.io/npm/v/homebridge-smart-irrigation?style=plastic)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![NPM](https://img.shields.io/npm/l/homebridge-smart-irrigation?style=plastic)](https://github.com/MTry/homebridge-smart-irrigation)
 
 </span>
