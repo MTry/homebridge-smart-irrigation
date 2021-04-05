@@ -4,13 +4,14 @@ const packageJson = require('./package.json')
 const schedule = require('node-schedule')
 const nodemailer = require("nodemailer")
 const got = require('got')
+const Pushover = require( 'pushover-js').Pushover
 
 async function sendEmail(transport,matter)
   {
   let transporter = nodemailer.createTransport(transport)
   try {await transporter.sendMail(matter)}
   catch (mailError){ 
-  throw new TypeError('Email not sent - recheck email config settings. Moving ahead...')}
+  throw new TypeError('Email not sent - recheck email settings. Moving ahead...')}
   }
 
 var mailTransport = {}
@@ -57,6 +58,12 @@ function SmartSprinklers (log, config) {
   this.portSecure = config.portSecure
   this.userID = config.userID
   this.userPwd = config.userPwd
+  this.pushEnable = config.pushEnable || false
+  this.userPO = config.userPO || ""
+  this.tokenPO = config.tokenPO || ""
+  this.devicePO = config.devicePO || ""
+  this.priorityPO = config.priorityPO || 0
+  this.soundPO = config.soundPO || "pushover"
   this.JanRad = config.JanRad
   this.FebRad = config.FebRad
   this.MarRad = config.MarRad
@@ -99,7 +106,6 @@ SmartSprinklers.prototype = {
           var Weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
           var Months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
           
-          var sendFrom = this.senderName + " <" + this.senderEmail + ">"
           mailTransport.host = this.smtpHost
           mailTransport.port = this.smtpPort
           mailTransport.secure = this.portSecure
@@ -107,10 +113,18 @@ SmartSprinklers.prototype = {
               user: this.userID,
               pass: this.userPwd
             }
-          mailContruct.from = sendFrom
+          mailContruct.from = this.senderName + " <" + this.senderEmail + ">"
           mailContruct.to = this.sendTo
           mailContruct.text = ""
           var mailSubject = ""
+          var pushTitle = ""
+          var pushMessage = ""
+
+          const pushover = new Pushover(this.userPO, this.tokenPO)
+          pushover
+            .setSound(this.soundPO)
+            .setPriority(this.priorityPO, 3600, 60)
+            .setHtml()
 
           var forecast = [{},{},{},{},{},{},{},{}]
           for (var pop = 0; pop <= 7; pop++){
@@ -180,6 +194,13 @@ SmartSprinklers.prototype = {
             forecastMail = forecastMail + "Precipitation: " + forecast[dd].rain + " mm | ETo: " + forecast[dd].ETO.toFixed(2) + " mm" + "\n"
             forecastMail = forecastMail + "----------------------------------------------------------\n"
           }
+          var forecastPush = ""
+          forecastPush = forecast[0].summary + " today with " + forecast[0].clouds + "% clouds" + "\n"
+          forecastPush = forecastPush + "Sunrise: " + forecast[0].sunrise.toLocaleString() + "  |  RH: " + forecast[0].humidity + "%\n"
+          forecastPush = forecastPush + "[Min | Max] Temp: " + forecast[0].min + "°C | " + forecast[0].max + "°C" + "\n"
+          forecastPush = forecastPush + "Pressure: " + forecast[0].pressure + " hPa | Wind: " + forecast[0].speed + " m/s" + "\n"
+          forecastPush = forecastPush + "Precipitation: " + forecast[0].rain + " mm | ETo: " + forecast[0].ETO.toFixed(2) + " mm" + "\n"
+          forecastPush = forecastPush + "----------------------------------------------------------\n"
 
           var WaterNeeded = 0
           var wateringTime = new Array(this.zoned).fill(0)
@@ -284,6 +305,11 @@ SmartSprinklers.prototype = {
             
             schedule.scheduleJob(startTime, function () {
               this.log('Starting water cycle 1/%s', this.cycles)
+              if (this.pushEnable) {
+                pushTitle = "Starting Irrigation"
+                pushMessage = 'Starting water cycles for: ' + minTommss(wateringTime[zDay]) + ' minutes'
+                pushover.send(pushTitle,pushMessage).then(msj => {this.log("Push notification sent")}).catch(err => {this.log.warn('Push Error - Recheck config: ', err.message)})
+                }
               this._wateringCycle(1, 1)
             }.bind(this))
             this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(1)
@@ -292,8 +318,13 @@ SmartSprinklers.prototype = {
             mailContruct.subject = mailSubject
             mailContruct.text = waterMail + "----------------------------------------------------------\n" + "----------------------FORECAST--------------------\n" + forecastMail
             wateringDone = false
+            if (this.pushEnable) {
+              pushTitle = mailSubject
+              pushMessage = waterMail + "----------------------------------------------------------\n" + "TODAY:\n"+ forecastPush
+              pushover.send(pushTitle,pushMessage).then(msj => {this.log("Push notification sent")}).catch(err => {this.log.warn('Push Error - Recheck config: ', err.message)})
+              }
             if (this.emailEnable) {
-              sendEmail(mailTransport, mailContruct).then(res => {this.log("Email Notification Sent")}).catch(err => {this.log('Error: ', err.message)})
+              sendEmail(mailTransport, mailContruct).then(res => {this.log("Email notification sent")}).catch(err => {this.log.warn('Error: ', err.message)})
               }
           } else {
             this.log('------------------------------------------------')
@@ -303,12 +334,18 @@ SmartSprinklers.prototype = {
             else {mailSubject = "🚫 No Irrigation Scheduled"}
             waterMail = "----------------------------------------------------------\n" + "No schedule set. Recalculation set for:\n"
             waterMail = waterMail + Weekday[forecast[zDay].sunrise.getDay()] + ", " + forecast[zDay].sunrise.toLocaleString() + "\n"
+            pushMessage = waterMail
             waterMail = waterMail + "----------------------------------------------------------\n" + "----------------------FORECAST--------------------\n"
             mailContruct.text = waterMail + forecastMail
             mailContruct.subject = mailSubject
             wateringDone = false
+            if (this.pushEnable) {
+              pushTitle = mailSubject
+              pushMessage = pushMessage + "----------------------------------------------------------\n" + "TODAY:\n"+ forecastPush
+              pushover.send(pushTitle,pushMessage).then(msj => {this.log("Push notification sent")}).catch(err => {this.log.warn('Push Error - Recheck config: ', err.message)})
+              }
             if (this.emailEnable) {
-              sendEmail(mailTransport, mailContruct).then(res => {this.log("Email Notification Sent")}).catch(err => {this.log('Error: ', err.message)})
+              sendEmail(mailTransport, mailContruct).then(res => {this.log("Email notification sent")}).catch(err => {this.log.warn('Error: ', err.message)})
               }
             schedule.scheduleJob(forecast[zDay].sunrise, function () {
             this._calculateSchedule(function () {})
@@ -318,7 +355,7 @@ SmartSprinklers.prototype = {
           callback()    
       })
       .catch(err => {
-          this.log.warn('Error getting weather data: %s', err.message)
+          this.log.warn('Error getting weather data or %s', err.message)
           setTimeout(() => {
           this._calculateSchedule(function () {})
           }, 60000)

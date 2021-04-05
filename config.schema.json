@@ -166,6 +166,213 @@
         "required": true,
         "default": "password"
         },
+      "pushEnable": {
+        "title": "Enable",
+        "description": "Enable Push Notifications",
+        "type": "boolean",
+        "required": false,
+        "default": false
+        },
+        "userPO": {
+        "title": "User Key:",
+        "type": "string",
+        "required": true,
+        "default": "User"
+        },      
+        "tokenPO": {
+        "title": "Application Token:",
+        "type": "string",
+        "required": true,
+        "default": "Token"
+        },
+        "devicePO": {
+        "title": "Receiving Device(s):",
+        "type": "string",
+        "default": ""
+        },
+      "priorityPO": {
+        "title": "Message Priority:",
+        "type": "integer",
+        "default": 0,
+        "required": false,
+        "oneOf": [
+            {
+              "title": "Lowest (-2)",
+              "enum": [
+                -2
+              ]
+            },
+            {
+              "title": "Low (-1)",
+              "enum": [
+                -1
+              ]
+            },
+            {
+              "title": "Normal (0)",
+              "enum": [
+                0
+              ]
+            },
+            {
+              "title": "High (1)",
+              "enum": [
+                1
+              ]
+            },
+            {
+              "title": "Emergency (2)",
+              "enum": [
+                2
+              ]
+            }
+          ]
+        },
+        "soundPO": {
+        "title": "Notification Sound:",
+        "type": "string",
+        "default": "pushover",
+        "oneOf": [
+            {
+              "title": "pushover",
+              "enum": [
+                "pushover"
+              ]
+            },
+            {
+              "title": "bike",
+              "enum": [
+                "bike"
+              ]
+            },
+            {
+              "title": "bugle",
+              "enum": [
+                "bugle"
+              ]
+            },
+            {
+              "title": "cashregister",
+              "enum": [
+                "cashregister"
+              ]
+            },
+            {
+              "title": "classical",
+              "enum": [
+                "classical"
+              ]
+            },
+            {
+              "title": "cosmic",
+              "enum": [
+                "cosmic"
+              ]
+            },
+            {
+              "title": "falling",
+              "enum": [
+                "falling"
+              ]
+            },
+            {
+              "title": "gamelan",
+              "enum": [
+                "gamelan"
+              ]
+            },
+            {
+              "title": "incoming",
+              "enum": [
+                "incoming"
+              ]
+            },
+            {
+              "title": "intermission",
+              "enum": [
+                "intermission"
+              ]
+            },
+            {
+              "title": "magic",
+              "enum": [
+                "magic"
+              ]
+            },
+            {
+              "title": "mechanical",
+              "enum": [
+                "mechanical"
+              ]
+            },
+            {
+              "title": "pianobar",
+              "enum": [
+                "pianobar"
+              ]
+            },
+            {
+              "title": "siren",
+              "enum": [
+                "siren"
+              ]
+            },
+            {
+              "title": "spacealarm",
+              "enum": [
+                "spacealarm"
+              ]
+            },
+            {
+              "title": "tugboat",
+              "enum": [
+                "tugboat"
+              ]
+            },
+            {
+              "title": "alien",
+              "enum": [
+                "alien"
+              ]
+            },
+            {
+              "title": "climb",
+              "enum": [
+                "climb"
+              ]
+            },
+            {
+              "title": "persistent",
+              "enum": [
+                "persistent"
+              ]
+            },
+            {
+              "title": "echo",
+              "enum": [
+                "echo"
+              ]
+            },
+            {
+              "title": "updown",
+              "enum": [
+                "updown"
+              ]
+            },
+            {
+              "title": "vibrate",
+              "enum": [
+                "vibrate"
+              ]
+            },
+            {
+              "title": "none",
+              "enum": [
+                "none"
+              ]
+            }
+          ]
+        },
 
       "JanRad": {"type": "number", "title": "January", "default":6},
       "FebRad": {"type": "number", "title": "February", "default":6},
@@ -483,6 +690,57 @@
           "htmlClass": "col-xs-3",
           "items": [
             "userPwd"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Pushover Notifications Setup",
+      "expandable": true,
+      "expanded": false,
+      "htmlClass": "row",
+      "items": [
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
+            "pushEnable"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
+            "userPO"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
+            "tokenPO"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
+            "devicePO"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
+            "priorityPO"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
+            "soundPO"
           ]
         }
       ]

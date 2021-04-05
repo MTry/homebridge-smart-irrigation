@@ -11,7 +11,7 @@
 
 ## Description
 
-Turn any electrical irrigation valve into a smart-valve!
+Turn any electrical irrigation valve into a smart-valve.. or run your pumps on a smart schedule based on your climate!
 
 This [Homebridge](https://github.com/nfarina/homebridge) plugin exposes a multi-zone irrigation sprinkler <b>dummy control system</b> to Apple's [HomeKit](http://www.apple.com/ios/home/).
 
@@ -109,6 +109,12 @@ Start times will vary daily as a result of changing sunrise times as well as the
             "portSecure": false,
             "userID": "someone@yourmail.com",
             "userPwd": "password",
+            "pushEnable": true,
+            "userPO": "your---user---key",
+            "tokenPO": "your---app---token",
+            "devicePO": "iphone",
+            "priorityPO": 0,
+            "soundPO": "pushover",
             "JanRad": 5.4,
             "FebRad": 6.3,
             "MarRad": 7,
@@ -203,7 +209,7 @@ Start times will vary daily as a result of changing sunrise times as well as the
         }
 ```
 
-## Primary Settings
+## Primary Setup
 
 | Key | Description | Default |
 | --- | --- | --- |
@@ -220,7 +226,7 @@ Start times will vary daily as a result of changing sunrise times as well as the
 | `longitude` | Your decimal longitude | N/A |
 | `altitude` | Enter the altitude in meters | `0` |
 
-## Email Notification Settings
+## Email Notifications Setup
 Currently this supports basic authentication. If using Gmail, you will need to go to the security settings of your account to enable less secure app access. *It might be best to create a specific ID for this purpose to avoid security risks to your main account!*
 
 | Key | Description | Default |
@@ -234,6 +240,18 @@ Currently this supports basic authentication. If using Gmail, you will need to g
 | `portSecure` | Secure Port | `false` |
 | `userID` | SMTP Username | N/A |
 | `userPwd` | SMTP Password | N/A |
+
+## Pushover Notifications Setup
+Push notifications using [Pushover](https://pushover.net/) are now supported.
+
+| Key | Description | Default |
+| --- | --- | --- |
+| `pushEnable` | Enable Push Notifications | `false` |
+| `userPO` | Your user key | N/A |
+| `tokenPO` | Your application token | N/A |
+| `devicePO` | Receiving devices | `all` |
+| `priorityPO` | Message Priority | `0` |
+| `soundPO` | Notification sound | `pushover` |
 
 ## Monthly data of Mean Daily Solar Radiation [kWh/day]
 
@@ -299,8 +317,6 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 - The `Set Duration` of the service is set at the total watering duration on every calculation. The individual zones are set at the corresponding zone's ***single-cycle time***. When the watering run starts, the `Remaining Duration` of the service counts down to `0` through the runtime while the active zone displays the `Remaining Duration` of that cycle.
 
 ## Way forward..
-
-- [ ] Push messages to indicate start and completion of scheduled irrigation
 
 - [ ] Use live daily shortwave solar radiation data/forecast through an API instead of relying on having to feed historical averages.. the only  service I am aware of which has a free option is [Solcast](https://solcast.com/solar-radiation-data/) which offers 10 API calls a day. Any suggestions if its worth doing this?
 
