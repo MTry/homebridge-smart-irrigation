@@ -1,7 +1,7 @@
 {
   "pluginAlias": "SmartSprinklers",
   "headerDisplay": "Homebridge plugin for climate based adaptive irrigation sprinkler control. Default [values][range] mentioned in description.",
-  "footerDisplay": "Created by Mayank Tandon - @mTry",
+  "footerDisplay": "Created by Mayank Tandon - @MTry",
   "pluginType": "accessory",
   "singular": true,
  
@@ -33,12 +33,19 @@
       "required": false,
       "default": false
       },
-        "recheckTime": {
-        "title": "Recheck Time",
-        "description": "Reassess - minutes before runtime.[None]",
-        "type": "number",
-        "default": 0,
-        "enum": [15, 30, 60 ]
+      "exposeControls": {
+      "title": "Expose Controls",
+      "description": "Expose Controls to Home App. [true]",
+      "type": "boolean",
+      "required": false,
+      "default": true
+      },
+      "recheckTime": {
+      "title": "Recheck Time",
+      "description": "Reassess - minutes before runtime.[None]",
+      "type": "number",
+      "default": 0,
+      "enum": [15, 30, 60 ]
       },
       "latitude": {
       "title": "Latitude:",
@@ -542,14 +549,21 @@
       "items": [
         {
           "type": "section",
-          "htmlClass": "col-xs-4",
+          "htmlClass": "col-xs-3",
+          "items": [
+            "exposeControls"
+          ]
+        },  
+        {
+          "type": "section",
+          "htmlClass": "col-xs-3",
           "items": [
             "verbosed"
           ]
         },
         {
           "type": "section",
-          "htmlClass": "col-xs-4",
+          "htmlClass": "col-xs-3",
           "items": [
             "masterDisable"
           ]

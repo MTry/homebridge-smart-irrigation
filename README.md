@@ -21,6 +21,8 @@ Although a <i>dummy</i>, it brings smarts of an <b>evapotranspiration</b>[<b>ET<
 
 The plugin can optionally email you, and/or send you push notifications through [Pushover](https://pushover.net), with the watering schedule it has calculated, or when a watering run is completed, along with the next 7-day weather forecast.
 
+Added option to expose system controls to Homekit allowing a user to enable/disable irrigation, rechecks, push and email notifications from within the Home App.
+
 ## Why?
 Searching for an irrigation or sprinkler control plugin never showed any suitable option for my needs. The one that came closest, and is the ***inspiration and basis*** for this plugin is [Tom Rodrigues's](https://github.com/Tommrodrigues) [homebridge-web-sprinklers](https://github.com/Tommrodrigues/homebridge-web-sprinklers). But like many others, I didn't have the http hardware for it to control, or the inclination to rig it! What I did have access to, were some solenoid valves which I could power from a smart socket that was exposed to Homekit. So I stripped the code to just expose the dummy sprinkler accessories, reworked the irrigation logic - and then, one thing led to another.. in my quest to achieve a more granular control and incorporate more irrigation science to create a *climate adaptive irrigation controller*.
 
@@ -91,6 +93,7 @@ Start times will vary daily as a result of changing sunrise times as well as the
 {
             "accessory": "SmartSprinklers",
             "name": "Irrigation",
+            "exposeControls": true,
             "verbosed": true,
             "masterDisable": false,
             "recheckTime": 15,
@@ -212,10 +215,18 @@ Start times will vary daily as a result of changing sunrise times as well as the
 ```
 
 ## Primary Setup
+>**Expose Controls** - `exposeControls` - exposes up to 4 additional *related* `switch` services allowing a user basic control of the system from within the Home App:
+> - **Master:** If exposed, this switch allows enabling or disabling irrigation. When disabled it will cancel any scheduled watering cycles - although the system will continue routine weather checks(and notifications if enabled). Re-enabling will trigger recalculation and rescheduling.
+> - **Recheck:** This is exposed ***only*** if the `recheckTime` has been set to a non-zero value. When disabled it will cancel any scheduled rechecks - although the system will proceed with the scheduled watering cycles. Re-enabling will trigger recalculation and rescheduling.
+> - **Email Notify:** This is exposed ***only*** if `emailEnable` has been set. Enable/disable email notifications.
+> - **Push Notify:** This is exposed ***only*** if `pushEnable` has been set. Enable/disable push notifications.
+
+>These `switch` settings are persistent across plugin/Homebridge restarts, so you shouldn't have to reset your preferences!
 
 | Key | Description | Default |
 | --- | --- | --- |
 | `name` | Name that appears in the Home app | N/A |
+| `exposeControls` | Expose controls to Homekit | `true` |
 | `verbosed` | Verbose Calculations and Extended Climate data | `true` |
 | `masterDisable` | Disable scheduling all irrigation | `false` |
 | `recheckTime` | Reassess - minutes before runtime | `0` |

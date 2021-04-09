@@ -5,84 +5,106 @@ const schedule = require('node-schedule')
 const nodemailer = require("nodemailer")
 const got = require('got')
 const Pushover = require( 'pushover-js').Pushover
+const storage = require('node-persist')
+
+async function storeState(param,state)
+  {
+    await storage.init({dir:cacheDirectory, forgiveParseErrors: true})
+    await storage.setItem(param,state)
+  }
+async function getState(param)
+  {
+    await storage.init({dir:cacheDirectory, forgiveParseErrors: true})
+    let ret = await storage.getItem(param)
+    return ret
+  }
 
 async function sendEmail(transport,matter)
   {
-  let transporter = nodemailer.createTransport(transport)
-  try {await transporter.sendMail(matter)}
-  catch (mailError){ 
-  throw new TypeError('Email not sent - recheck email settings. Moving ahead...')}
+    let transporter = nodemailer.createTransport(transport)
+    try {await transporter.sendMail(matter)}
+    catch (mailError){ 
+    throw new TypeError('Email not sent - recheck email settings. Moving ahead...')}
   }
 
+var cacheDirectory = "./homebridge-smart-irrigation/storage"
 var mailTransport = {}
 var mailContruct = {}
 var wateringDone = false
 var servicetimeEnd = 0
 var zoneEnd = new Array(8).fill(0)
+var recheckJob = {}
+var wateringJob = {}
+var recheckScheduled = false
+var wateringScheduled = false
 
-function minTommss(minutes){
- var sign = minutes < 0 ? "-" : "";
- var min = Math.floor(Math.abs(minutes))
- var sec = Math.floor((Math.abs(minutes) * 60) % 60);
- return sign + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
-}
+function minTommss(minutes)
+  {
+    var sign = minutes < 0 ? "-" : "";
+    var min = Math.floor(Math.abs(minutes))
+    var sec = Math.floor((Math.abs(minutes) * 60) % 60);
+    return sign + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
+  }
 
-module.exports = function (homebridge) {
-  Service = homebridge.hap.Service
-  Characteristic = homebridge.hap.Characteristic
-  homebridge.registerAccessory('homebridge-smart-irrigation', 'SmartSprinklers', SmartSprinklers)
-}
+module.exports = function (homebridge)
+  {
+    Service = homebridge.hap.Service
+    Characteristic = homebridge.hap.Characteristic
+    homebridge.registerAccessory('homebridge-smart-irrigation', 'SmartSprinklers', SmartSprinklers)
+  }
 
 function SmartSprinklers (log, config) {
   this.log = log
-  this.name = config.name
+  this.name = config.name || "Irrigation"
   this.zones = config.zones
-  this.zoned = config.zones.length || 4
-  this.latitude = config.latitude
-  this.longitude = config.longitude
+  this.zoned = config.zones.length || 1
+  this.latitude = config.latitude || 0
+  this.longitude = config.longitude || 0
   this.altitude = config.altitude || 1
-  this.keyAPI = config.keyAPI
-  this.verbosed = config.verbosed
-  this.masterDisable = config.masterDisable
+  this.keyAPI = config.keyAPI || ""
+  this.verbosed = config.verbosed || true
+  this.masterDisable = config.masterDisable || false
+  this.exposeControls = config.exposeControls || true
   this.recheckTime = config.recheckTime || 0
   this.sunriseOffset = config.sunriseOffset || 0
-  this.lowThreshold = config.lowThreshold
-  this.highThreshold = config.highThreshold
+  this.lowThreshold = config.lowThreshold || 10
+  this.highThreshold = config.highThreshold || 20
   this.cycles = config.cycles || 2
-  this.emailEnable = config.emailEnable
-  this.senderName = config.senderName
-  this.senderEmail = config.senderEmail
-  this.sendTo = config.sendTo
-  this.smtpHost = config.smtpHost
-  this.smtpPort = config.smtpPort
-  this.portSecure = config.portSecure
-  this.userID = config.userID
-  this.userPwd = config.userPwd
+  this.emailEnable = config.emailEnable || false
+  this.senderName = config.senderName || ""
+  this.senderEmail = config.senderEmail || ""
+  this.sendTo = config.sendTo || ""
+  this.smtpHost = config.smtpHost || ""
+  this.smtpPort = config.smtpPort || 587
+  this.portSecure = config.portSecure || false
+  this.userID = config.userID || ""
+  this.userPwd = config.userPwd || ""
   this.pushEnable = config.pushEnable || false
   this.userPO = config.userPO || ""
   this.tokenPO = config.tokenPO || ""
   this.devicePO = config.devicePO || ""
   this.priorityPO = config.priorityPO || 0
   this.soundPO = config.soundPO || "pushover"
-  this.JanRad = config.JanRad
-  this.FebRad = config.FebRad
-  this.MarRad = config.MarRad
-  this.AprRad = config.AprRad
-  this.MayRad = config.MayRad
-  this.JunRad = config.JunRad
-  this.JulRad = config.JulRad
-  this.AugRad = config.AugRad
-  this.SepRad = config.SepRad
-  this.OctRad = config.OctRad
-  this.NovRad = config.NovRad
-  this.DecRad = config.DecRad
+  this.JanRad = config.JanRad || 6
+  this.FebRad = config.FebRad || 6
+  this.MarRad = config.MarRad || 6
+  this.AprRad = config.AprRad || 6
+  this.MayRad = config.MayRad || 6
+  this.JunRad = config.JunRad || 6
+  this.JulRad = config.JulRad || 6
+  this.AugRad = config.AugRad || 6
+  this.SepRad = config.SepRad || 6
+  this.OctRad = config.OctRad || 6
+  this.NovRad = config.NovRad || 6
+  this.DecRad = config.DecRad || 6
   this.valveAccessory = []
   this.zoneDuration = []
-  this.manufacturer = config.manufacturer || packageJson.author.name
-  this.serial = config.serial || this.latitude
-  this.model = config.model || packageJson.name
-  this.firmware = config.firmware || packageJson.version
+  this.manufacturer = packageJson.author.name
+  this.serial = this.latitude
+  this.model = packageJson.name
+  this.firmware = packageJson.version
   this.service = new Service.IrrigationSystem(this.name)
+  if (this.recheckTime != 0) {this.recheckEnable = true}
 }
 
 SmartSprinklers.prototype = {
@@ -290,20 +312,22 @@ SmartSprinklers.prototype = {
             waterMail = waterMail + "----------------------------------------------------------\n"
 
             var recheck = new Date(startTime-(this.recheckTime*60000))
-            if ((recheck > Date.now()) && ((recheck-(30*60000)) > Date.now()) && (this.recheckTime != 0)) {
-              schedule.scheduleJob(recheck, function () {
+            if ((recheck > Date.now()) && ((recheck-(30*60000)) > Date.now()) && (this.recheckEnable)) {
+                recheckJob = schedule.scheduleJob(recheck, function () {
                 this._calculateSchedule(function () {})
               }.bind(this))
+              recheckScheduled = true
               this.log('------------------------------------------------')
               this.log('Reassessment: %s %s', Weekday[recheck.getDay()], recheck.toLocaleString())
               waterMail = waterMail + "Reassessment: " + Weekday[recheck.getDay()].substring(0,3) + " " + recheck.toLocaleString() + "\n"
             } else {
+              recheckScheduled = false
               this.log('------------------------------------------------')
               this.log('No further reassessment before schedule!')
               waterMail = waterMail + "No further reassessment before schedule.\n"
             }
             
-            schedule.scheduleJob(startTime, function () {
+            wateringJob = schedule.scheduleJob(startTime, function () {
               this.log('Starting water cycle 1/%s', this.cycles)
               if (this.pushEnable) {
                 pushTitle = "Starting Irrigation"
@@ -312,6 +336,7 @@ SmartSprinklers.prototype = {
                 }
               this._wateringCycle(1, 1)
             }.bind(this))
+            wateringScheduled = true
             this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(1)
             if (wateringDone) {mailSubject = "✅ Watering finished | " + "♒️ Irrigation Scheduled ⏱"}
             else {mailSubject = "♒️ Irrigation Scheduled ⏱"}
@@ -327,6 +352,7 @@ SmartSprinklers.prototype = {
               sendEmail(mailTransport, mailContruct).then(res => {this.log("Email notification sent")}).catch(err => {this.log.warn('Error: ', err.message)})
               }
           } else {
+            wateringScheduled = false
             this.log('------------------------------------------------')
             this.log('No schedule set, recalculation: %s', forecast[zDay].sunrise.toLocaleString())
             this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(0)
@@ -394,6 +420,55 @@ SmartSprinklers.prototype = {
         callback()
   },
 
+  masterHandle: function(value, callback) {
+  getState('masterState').then(ret => {
+    if (ret !== true && value === true) {this._calculateSchedule(function () {})}
+    if (value==true){
+      this.log('Enabling irrigation. Will also recalculate now...')
+    } else {
+      this.log('Disabling irrigation and cancelling next watering cycle if scheduled')
+      if (wateringScheduled) {wateringJob.cancel()}
+      this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(0)
+    }
+    this.masterDisable = !value
+    storeState('masterState',value)
+  })
+  callback()
+  },
+
+  recheckHandle: function(value, callback) {
+    getState('recheckState').then(ret => {
+    if (ret !== true && value === true) {this._calculateSchedule(function () {})}
+    if (value==true){
+      this.log('Enabling reassesment. Will also recalculate now...')
+    } else {
+      this.log('Disabling reassesment and cancelling next reassessment if scheduled')
+      if (recheckScheduled) {recheckJob.cancel()}
+    }
+    this.recheckEnable = value
+    storeState('recheckState',value)
+  })
+  callback()
+  },
+  
+  mailHandle: function(value, callback) {
+    var state = ""
+    if (value==true){state = "Enable"} else {state = "Disable"}
+    this.log('Set email notifications to: %s', state)
+    this.emailEnable = value
+    storeState('mailState',value)
+  callback()
+  },
+
+  pushHandle: function(value, callback) {
+    var state = ""
+    if (value==true){state = "Enable"} else {state = "Disable"}
+    this.log('Set push notifications to: %s', state)
+    this.pushEnable = value
+    storeState('pushState',value)
+  callback()
+  },
+ 
   zoneRemainingTime: function (zone, callback) {
     if (this.valveAccessory[zone].getCharacteristic(Characteristic.InUse).value) {
       const remaining = Math.floor((zoneEnd[zone] - Date.now())/1000)
@@ -408,17 +483,17 @@ SmartSprinklers.prototype = {
   },
 
   serviceRemainingTime(callback) {
-      if (this.service.getCharacteristic(Characteristic.InUse).value) {
-        const remaining = Math.floor((servicetimeEnd - Date.now())/1000)
-        if (remaining < 0) {
-          callback(null, 0)
-        } else {
-          callback(null, remaining)
-        }
-      } else {
+    if (this.service.getCharacteristic(Characteristic.InUse).value) {
+      const remaining = Math.floor((servicetimeEnd - Date.now())/1000)
+      if (remaining < 0) {
         callback(null, 0)
+      } else {
+        callback(null, remaining)
       }
-    },
+    } else {
+      callback(null, 0)
+    }
+  },
 
   getServices: function () {
     this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(0)
@@ -431,7 +506,7 @@ SmartSprinklers.prototype = {
       .getCharacteristic(Characteristic.RemainingDuration)
       .setProps({maxValue: 18000})
     
-      this.service
+    this.service
       .getCharacteristic(Characteristic.SetDuration)
       .setProps({maxValue: 18000})
       
@@ -445,8 +520,10 @@ SmartSprinklers.prototype = {
       .setCharacteristic(Characteristic.Model, this.model)
       .setCharacteristic(Characteristic.SerialNumber, this.serial)
       .setCharacteristic(Characteristic.FirmwareRevision, this.firmware)
+      .setCharacteristic(Characteristic.ValveType, 0)
     
     var services = [this.informationService, this.service]
+
     for (var zone = 1; zone <= this.zoned; zone++) {
       var accessory = new Service.Valve(this.zones[zone-1].zoneName, zone)
 
@@ -475,10 +552,74 @@ SmartSprinklers.prototype = {
       this.service.addLinkedService(accessory)
       services.push(accessory)
     }
+    if (this.exposeControls) {
+      this.log('Exposing controls to Homekit...')
+      var masterSwitch = new Service.Switch(this.name + ' Master','master')
+      masterSwitch.getCharacteristic(Characteristic.On)
+        .on('set', this.masterHandle.bind(this))
+      getState('masterState').then(ret => {
+        if((ret === undefined) || (ret === true)) {
+          masterSwitch.setCharacteristic(Characteristic.On, true)
+        } else {
+          masterSwitch.setCharacteristic(Characteristic.On, false)
+        }
+        })
+        this.service.addLinkedService(masterSwitch)
+        services.push(masterSwitch)
+        this.log('Exposed Master Control')
+
+      if (this.recheckTime !== 0){
+      var recheckSwitch = new Service.Switch(this.name + ' Recheck','recheck')
+      recheckSwitch.getCharacteristic(Characteristic.On)
+        .on('set', this.recheckHandle.bind(this))
+      getState('recheckState').then(ret => {
+        if((ret === undefined) || (ret === true)) {
+          recheckSwitch.setCharacteristic(Characteristic.On, true)
+        } else {
+          recheckSwitch.setCharacteristic(Characteristic.On, false)
+        }
+        })
+        this.service.addLinkedService(recheckSwitch)
+        services.push(recheckSwitch)
+        this.log('Exposed Recheck Control')
+      }
+      
+      if (this.emailEnable){
+      var mailSwitch = new Service.Switch(this.name + ' Email Notify','email')
+      mailSwitch.getCharacteristic(Characteristic.On)
+        .on('set', this.mailHandle.bind(this))
+      getState('mailState').then(ret => {
+        if((ret === undefined) || (ret === true)) {
+          mailSwitch.setCharacteristic(Characteristic.On, true)
+        } else {
+          mailSwitch.setCharacteristic(Characteristic.On, false)
+        }
+        })
+        this.service.addLinkedService(mailSwitch)
+        services.push(mailSwitch)
+        this.log('Exposed Email Notification Control')
+      }
+      
+      if (this.pushEnable){
+      var pushSwitch = new Service.Switch(this.name + ' Push Notify','push')
+      pushSwitch.getCharacteristic(Characteristic.On)
+        .on('set', this.pushHandle.bind(this))
+      getState('pushState').then(ret => {
+        if((ret === undefined) || (ret === true)) {
+          pushSwitch.setCharacteristic(Characteristic.On, true)
+        } else {
+          pushSwitch.setCharacteristic(Characteristic.On, false)
+        }
+        })
+        this.service.addLinkedService(pushSwitch)
+        services.push(pushSwitch)
+        this.log('Exposed Push Notification Control')
+      }
+
+    }
+
     this.log('Initialized %s zones', this.zoned)
-
     this._calculateSchedule(function () {})
-
     return services
   }
 
