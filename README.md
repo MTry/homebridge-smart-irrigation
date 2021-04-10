@@ -7,7 +7,7 @@
 
 <p align="center"><a href="https://pushover.net"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/icon-256.png" height="55"></a>    <a href="https://openweathermap.org/"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/logo_white_cropped.png" height="52"></a>    <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/email.png" height="52"></a></p>
 
-[![npm](https://img.shields.io/npm/dt/homebridge-smart-irrigation?style=plastic)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![npm](https://img.shields.io/npm/v/homebridge-smart-irrigation?style=plastic)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![NPM](https://img.shields.io/npm/l/homebridge-smart-irrigation?style=plastic)](https://github.com/MTry/homebridge-smart-irrigation)
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins) [![npm](https://img.shields.io/npm/dt/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![npm](https://img.shields.io/npm/v/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![NPM](https://img.shields.io/npm/l/homebridge-smart-irrigation?color=red)](https://github.com/MTry/homebridge-smart-irrigation)
 
 </span>
 
@@ -21,7 +21,7 @@ Although a <i>dummy</i>, it brings smarts of an <b>evapotranspiration</b>[<b>ET<
 
 The plugin can optionally email you, and/or send you push notifications through [Pushover](https://pushover.net), with the watering schedule it has calculated, or when a watering run is completed, along with the next 7-day weather forecast.
 
-Added option to expose system controls to Homekit allowing a user to enable/disable irrigation, rechecks, push and email notifications from within the Home App.
+Added option to expose system controls to Homekit allowing a user to enable/disable irrigation, rechecks, push and email notifications from within the Home App. Associated `WaterLevel` Characteristic shows the `%` of watering cycle remaining.
 
 ## Why?
 Searching for an irrigation or sprinkler control plugin never showed any suitable option for my needs. The one that came closest, and is the ***inspiration and basis*** for this plugin is [Tom Rodrigues's](https://github.com/Tommrodrigues) [homebridge-web-sprinklers](https://github.com/Tommrodrigues/homebridge-web-sprinklers). But like many others, I didn't have the http hardware for it to control, or the inclination to rig it! What I did have access to, were some solenoid valves which I could power from a smart socket that was exposed to Homekit. So I stripped the code to just expose the dummy sprinkler accessories, reworked the irrigation logic - and then, one thing led to another.. in my quest to achieve a more granular control and incorporate more irrigation science to create a *climate adaptive irrigation controller*.
