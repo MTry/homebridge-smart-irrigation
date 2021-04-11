@@ -2,8 +2,8 @@
   "private": false,
   "displayName": "Homebridge Smart Irrigation",
   "name": "homebridge-smart-irrigation",
-  "version": "1.3.0",
-  "description": "Adaptive Climate based multi-zone Irrigation control of Sprinklers.",
+  "version": "1.3.1",
+  "description": "Adaptive Climate (evapotranspiration) based multi-zone irrigation control of sprinklers with homekit controls. Push and email notification options of start and completion of watering cycles with weather information.",
   "license": "MIT",
   "_requiredBy": [
     "#USER"

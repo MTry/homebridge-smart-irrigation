@@ -7,7 +7,7 @@
 
 <p align="center"><a href="https://pushover.net"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/icon-256.png" height="55"></a>    <a href="https://openweathermap.org/"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/logo_white_cropped.png" height="52"></a>    <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/email.png" height="52"></a></p>
 
-[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins) [![npm](https://img.shields.io/npm/dt/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![npm](https://img.shields.io/npm/v/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![NPM](https://img.shields.io/npm/l/homebridge-smart-irrigation?color=red)](https://github.com/MTry/homebridge-smart-irrigation)
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)<br>[![npm](https://img.shields.io/npm/dt/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![npm](https://img.shields.io/npm/v/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![NPM](https://img.shields.io/npm/l/homebridge-smart-irrigation?color=red)](https://github.com/MTry/homebridge-smart-irrigation)
 
 </span>
 
@@ -221,7 +221,7 @@ Start times will vary daily as a result of changing sunrise times as well as the
 > - **Email Notify:** This is exposed ***only*** if `emailEnable` has been set. Enable/disable email notifications.
 > - **Push Notify:** This is exposed ***only*** if `pushEnable` has been set. Enable/disable push notifications.
 
->These `switch` settings are persistent across plugin/Homebridge restarts, so you shouldn't have to reset your preferences!
+>These `switch` settings are persistent across plugin/Homebridge restarts, so you shouldn't have to reset your preferences in the Home App!
 
 | Key | Description | Default |
 | --- | --- | --- |
@@ -315,7 +315,7 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 ## Notes & Suggestions
 
-- For any of the smart outlets/sockets you intend to use by following the zone states for driving irrigation valves, do setup an additional automation in Homekit to switch them off after a preset time - this can be a kind of failsafe in case the plugin crashes for any reason and leaves the zone turned on indefinately.<br>
+- For any of the smart outlets/sockets you intend to use by following the zone states for driving irrigation valves, do setup an additional automation in Homekit to switch them off after a preset time - this can be a kind of failsafe in case the plugin crashes for any reason and leaves the zone turned on indefinately.
 
 - The plugin pairs very well with multi-channel devices such as the 4CHPRO from Sonoff which has dry contacts to relay low voltage AC/DC to control solenoid valves and also has a wide operating voltage range. I use 2 of these mounted in an IP65 outdoor enclosure to run a 8-zone 12VDC configuration. The plugin used to expose the 4CHPRO is [homebridge-ewelink](https://github.com/bwp91/homebridge-ewelink) plugin from [Ben](https://github.com/sponsors/bwp91), who somehow manages to squeeze more than 24 hours in a day giving support, adding features and fixing bugs!
 

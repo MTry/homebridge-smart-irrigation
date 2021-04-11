@@ -7,11 +7,25 @@ const got = require('got')
 const Pushover = require( 'pushover-js').Pushover
 const storage = require('node-persist')
 
+var workEnabled = true
+var cacheDirectory = "./homebridge-smart-irrigation/storage"
+var mailTransport = {}
+var mailContruct = {}
+var wateringDone = false
+var servicetimeEnd = 0
+var zoneEnd = new Array(8).fill(0)
+var recheckJob = {}
+var wateringJob = {}
+var recheckScheduled = false
+var wateringScheduled = false
+var fullTime = 0
+
 async function storeState(param,state)
   {
     await storage.init({dir:cacheDirectory, forgiveParseErrors: true})
     await storage.setItem(param,state)
   }
+
 async function getState(param)
   {
     await storage.init({dir:cacheDirectory, forgiveParseErrors: true})
@@ -26,19 +40,6 @@ async function sendEmail(transport,matter)
     catch (mailError){ 
     throw new TypeError('Email not sent - recheck email settings. Moving ahead...')}
   }
-
-var workEnabled = true
-var cacheDirectory = "./homebridge-smart-irrigation/storage"
-var mailTransport = {}
-var mailContruct = {}
-var wateringDone = false
-var servicetimeEnd = 0
-var zoneEnd = new Array(8).fill(0)
-var recheckJob = {}
-var wateringJob = {}
-var recheckScheduled = false
-var wateringScheduled = false
-var fullTime = 0
 
 function minTommss(minutes)
   {
@@ -367,7 +368,6 @@ SmartSprinklers.prototype = {
             } else {
               wateringScheduled = false
               this.service.getCharacteristic(Characteristic.WaterLevel).updateValue(0)
-
               this.log('------------------------------------------------')
               this.log('No schedule set, recalculation: %s', forecast[zDay].sunrise.toLocaleString())
               this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(0)
@@ -512,7 +512,7 @@ SmartSprinklers.prototype = {
   },
 
   showWaterlevel(callback) {
-    if (this.service.getCharacteristic(Characteristic.InUse).value) {
+    if (this.service.getCharacteristic(Characteristic.ProgramMode).value) {
       const remaining = Math.floor((servicetimeEnd - Date.now())*100/fullTime)
       if (remaining < 0 || remaining > 100) {
         callback(null,100)
@@ -585,6 +585,7 @@ SmartSprinklers.prototype = {
       this.service.addLinkedService(accessory)
       services.push(accessory)
     }
+
     if (this.exposeControls) {
       this.log('Exposing controls to Homekit...')
       var masterSwitch = new Service.Switch(this.name + ' Master','master')
@@ -602,7 +603,7 @@ SmartSprinklers.prototype = {
         services.push(masterSwitch)
         this.log('Exposed Master Control')
 
-      if (this.recheckTime !== 0){
+      if (this.recheckTime !== 0) {
       var recheckSwitch = new Service.Switch(this.name + ' Recheck','recheck')
       recheckSwitch.getCharacteristic(Characteristic.On)
         .on('set', this.recheckHandle.bind(this))
@@ -619,7 +620,7 @@ SmartSprinklers.prototype = {
         this.log('Exposed Recheck Control')
       }
       
-      if (this.emailEnable){
+      if (this.emailEnable) {
       var mailSwitch = new Service.Switch(this.name + ' Email Notify','email')
       mailSwitch.getCharacteristic(Characteristic.On)
         .on('set', this.mailHandle.bind(this))
@@ -652,12 +653,10 @@ SmartSprinklers.prototype = {
         services.push(pushSwitch)
         this.log('Exposed Push Notification Control')
       }
-
     }
 
     this.log('Initialized %s zones', this.zoned)
     this._calculateSchedule(function () {})
     return services
   }
-
 }
