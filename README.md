@@ -7,7 +7,8 @@
 
 <p align="center"><a href="https://pushover.net"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/icon-256.png" height="55"></a>    <a href="https://openweathermap.org/"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/logo_white_cropped.png" height="52"></a>    <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/email.png" height="52"></a></p>
 
-[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)<br>[![npm](https://img.shields.io/npm/dt/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![npm](https://img.shields.io/npm/v/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![NPM](https://img.shields.io/npm/l/homebridge-smart-irrigation?color=red)](https://github.com/MTry/homebridge-smart-irrigation)
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)<br>[![npm](https://img.shields.io/npm/dt/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![npm](https://img.shields.io/npm/v/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![NPM](https://img.shields.io/npm/l/homebridge-smart-irrigation?color=red)](https://github.com/MTry/homebridge-smart-irrigation)<br>[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 
 </span>
 

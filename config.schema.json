@@ -20,15 +20,15 @@
           "default": "Irrigation"
         },
       "verbosed": {
-      "title": "Verbose Calculations and Extended Climate data",
-      "description": "Enable for more detailed calculation variables display. [true]",
+      "title": "Verbose Climate data",
+      "description": "Enable for more detailed display. [true]",
       "type": "boolean",
       "required": false,
       "default": true
       },
       "masterDisable": {
       "title": "Disable scheduling",
-      "description": "Disable scheduling all irrigation. [false]",
+      "description": "Disable scheduling irrigation. [false]",
       "type": "boolean",
       "required": false,
       "default": false
@@ -78,6 +78,7 @@
       "title": "API Key:",
       "description": "Enter your OpenWeatherMap API Key.",
       "type": "string",
+      "placeholder": "Your OWM Key",
       "required": true
       },
       "cycles": {
@@ -134,20 +135,20 @@
         "type": "string",
         "pattern": "^\\S+@\\S+$",
         "required": true,
-        "default": "email"
+        "placeholder": "abc@xyz.com"
         },
         "sendTo": {
         "title": "Receiver Email ID:",
         "type": "string",
         "pattern": "^\\S+@\\S+$",
         "required": true,
-        "default": "Name"
+        "placeholder": "abc@xyz.com"
         },
         "smtpHost": {
         "title": "SMTP Host:",
         "type": "string",
         "required": true,
-        "default": "Host"
+        "placeholder": "hostname"
         },
         "smtpPort": {
         "title": "SMTP Port:",
@@ -165,13 +166,13 @@
         "title": "SMTP Username:",
         "type": "string",
         "required": true,
-        "default": "username"
+        "placeholder": "username"
         },
         "userPwd": {
         "title": "SMTP Password:",
         "type": "string",
         "required": true,
-        "default": "password"
+        "placeholder": "password"
         },
       "pushEnable": {
         "title": "Enable",
@@ -184,18 +185,18 @@
         "title": "User Key:",
         "type": "string",
         "required": true,
-        "default": "User"
+        "placeholder": "User key"
         },      
         "tokenPO": {
         "title": "Application Token:",
         "type": "string",
         "required": true,
-        "default": "Token"
+        "placeholder": "App token"
         },
         "devicePO": {
         "title": "Receiving Device(s):",
         "type": "string",
-        "default": ""
+        "placeholder": "devices"
         },
       "priorityPO": {
         "title": "Message Priority:",
@@ -403,7 +404,8 @@
             "zoneName": {
               "title": "Zone Name",
               "type": "string",
-              "maxLength": 16
+              "maxLength": 16,
+              "placeholder": "zone name"
             },
             "enabled": {
               "title": "Zone Enabled",
@@ -429,7 +431,7 @@
               "description": "Default zone duration in minutes [20][0-60]",
               "default": 20,
               "maximum": 180,
-              "minimum": 0
+              "exclusiveMinimum": 0
             },
             "maxDuration": {
               "title": "Max Time",
@@ -437,7 +439,7 @@
               "description": "Maximum duration settable in minutes [30][0-60]",
               "default": 30,
               "maximum": 180,
-              "minimum": 0
+              "exclusiveMinimum": 0
             },
             "rainThreshold": {
               "title": "Rain Threshold",
@@ -459,19 +461,22 @@
               "title": "Drip LPH",
               "type": "number",
               "description": "Drip emmiter LPH",
-              "default": 2
+              "default": 2,
+              "exclusiveMinimum": 0
             },
             "dripNos": {
               "title": "Drip Nos",
               "type": "number",
               "description": "Number of drip emmiters",
-              "default": 1
+              "default": 1,
+              "exclusiveMinimum": 0
             },
             "dripArea": {
               "title": "Drip Area",
               "type": "number",
               "description": "Irrigation Area sq. meters",
-              "default": 1
+              "default": 1,
+              "exclusiveMinimum": 0
             },
             "efficiency": {
               "title": "Drip Efficiency",
