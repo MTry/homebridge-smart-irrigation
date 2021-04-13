@@ -18,7 +18,7 @@ Turn any electrical irrigation valve into a smart-valve.. or run your pumps on a
 
 This [Homebridge](https://github.com/nfarina/homebridge) plugin exposes a multi-zone irrigation sprinkler <b>dummy control system</b> to Apple's [HomeKit](http://www.apple.com/ios/home/).
 
-Although a <i>dummy</i>, it brings smarts of an <b>evapotranspiration</b>[<b>ET<sub>o</sub></b>] based climate/plant adaptive irrigation controller with the use of [OpenWeatherMap API](https://openweathermap.org/api). All parameters can be configured from the Homebridge UI and the plugin offers granular control specific to every zone's individual requirerments.
+Although a <i>dummy</i>, it brings smarts of an <b>evapotranspiration</b>[<b>ET<sub>o</sub></b>] based climate/plant adaptive irrigation controller with the use of [OpenWeatherMap API](https://openweathermap.org/api). All parameters can be configured from the Homebridge UI and the plugin offers granular control specific to every zone's individual requirements.
 
 The plugin can optionally email you, and/or send you push notifications through [Pushover](https://pushover.net), with the watering schedule it has calculated, or when a watering run is completed, along with the next 7-day weather forecast.
 
