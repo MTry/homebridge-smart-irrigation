@@ -1,7 +1,7 @@
 {
   "pluginAlias": "SmartSprinklers",
   "headerDisplay": "Homebridge plugin for climate based adaptive irrigation sprinkler control. Default [values][range] mentioned in description.",
-  "footerDisplay": "Please visit https://github.com/potrudeau/homebridge-messenger for more details.<br> Created by Mayank Tandon - @MTry",
+  "footerDisplay": "Please visit https://github.com/MTry/homebridge-smart-irrigation for more details.<br> Created by Mayank Tandon - @MTry",
   "pluginType": "accessory",
   "singular": true,
  
