@@ -1,7 +1,7 @@
 # Change Log
 All meaningful changes will be logged here.
 
-## **1.3.2 [13-04-2021]**
+## **1.3.3 [13-04-2021]**
 
 ### *Added:*
 - Added `.gitignore` & `CHANGELOG.md`
