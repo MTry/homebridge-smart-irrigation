@@ -326,13 +326,39 @@ SmartSprinklers.prototype = {
             }
           } else {
             wateringScheduled = false
+            let reasonNoschedule = ''
             this.service.getCharacteristic(Characteristic.WaterLevel).updateValue(0)
-            this.log('------------------------------------------------')
-            this.log('No schedule set, recalculation: %s', forecast[zDay].sunrise.toLocaleString())
             this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(0)
+
+            this.log('------------------------------------------------')
+            this.log('No schedule set:')
+            if (this.masterDisable) {
+              reasonNoschedule = '-Irrigation disabled \n'
+              this.log('-Irrigation disabled')
+            }
+            if (startTime.getTime() < Date.now()) {
+              reasonNoschedule = reasonNoschedule + '-Not enough time to complete before desired time \n'
+              this.log('-Not enough time to complete before desired time')
+            }
+            if (this.highThreshold > forecast[zDay].max) {
+              reasonNoschedule = reasonNoschedule + '-Forecasted MAX temp is less that highThreshold \n'
+              this.log('-Forecasted MAX temp is less that high threshold')
+            }
+            if (this.lowThreshold > forecast[zDay].min) {
+              reasonNoschedule = reasonNoschedule + '-Forecasted MIN temp is less that lowThreshold \n'
+              this.log('-Forecasted MIN temp is less that low threshold')
+            }
+            if (wateringTime[zDay] === 0) {
+              reasonNoschedule = reasonNoschedule + '-No schedule available or no watering needed \n'
+              this.log('-No schedule available or no watering needed')
+            }
+
+            this.log('Recalculation set for: %s', forecast[zDay].sunrise.toLocaleString())
+            reasonNoschedule = reasonNoschedule + 'Recalculation set for:\n'
+
             if (wateringDone) { mailSubject = '✅ Watering finished | ' + '🚫 No Irrigation Scheduled' } else { mailSubject = '🚫 No Irrigation Scheduled' }
-            let waterMail = '----------------------------------------------------------\n' + 'No schedule set. Recalculation set for:\n'
-            waterMail = waterMail + Weekday[forecast[zDay].sunrise.getDay()] + ', ' + forecast[zDay].sunrise.toLocaleString() + '\n'
+            let waterMail = '----------------------------------------------------------\n' + 'No schedule set: \n'
+            waterMail = waterMail + reasonNoschedule + Weekday[forecast[zDay].sunrise.getDay()] + ', ' + forecast[zDay].sunrise.toLocaleString() + '\n'
             pushMessage = waterMail
             waterMail = waterMail + '----------------------------------------------------------\n' + '----------------------FORECAST--------------------\n'
             mailContruct.text = waterMail + forecastMail

@@ -1,6 +1,11 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.3.4 [15-04-2021]**
+
+### *Added:*
+- Reason information in logs and push/email when no scheduling set [#2](https://github.com/MTry/homebridge-smart-irrigation/issues/2)
+
 ## **1.3.3 [13-04-2021]**
 
 ### *Added:*
