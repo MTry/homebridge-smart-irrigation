@@ -1,6 +1,11 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.3.5 [15-04-2021]**
+
+### *Fixed:*
+- Typos in logs/notifications
+
 ## **1.3.4 [15-04-2021]**
 
 ### *Added:*

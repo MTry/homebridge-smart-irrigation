@@ -341,11 +341,11 @@ SmartSprinklers.prototype = {
               this.log('-Not enough time to complete before desired time')
             }
             if (this.highThreshold > forecast[zDay].max) {
-              reasonNoschedule = reasonNoschedule + '-Forecasted MAX temp is less that highThreshold \n'
+              reasonNoschedule = reasonNoschedule + '-Forecasted MAX temp is less than highThreshold \n'
               this.log('-Forecasted MAX temp is less that high threshold')
             }
             if (this.lowThreshold > forecast[zDay].min) {
-              reasonNoschedule = reasonNoschedule + '-Forecasted MIN temp is less that lowThreshold \n'
+              reasonNoschedule = reasonNoschedule + '-Forecasted MIN temp is less than lowThreshold \n'
               this.log('-Forecasted MIN temp is less that low threshold')
             }
             if (wateringTime[zDay] === 0) {
