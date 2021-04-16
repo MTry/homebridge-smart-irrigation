@@ -22,6 +22,8 @@ let wateringJob = {}
 let recheckScheduled = false
 let wateringScheduled = false
 let fullTime = 0
+const pcImage = 'https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/pcimage.png'
+const pcURL = 'https://api.pushcut.io/v1/notifications/'
 
 async function storeState (param, state) {
   await storage.init({ dir: cacheDirectory, forgiveParseErrors: true })
@@ -73,8 +75,8 @@ function SmartSprinklers (log, config) {
     this.log.warn('Sunrise Offset out of bounds! Disabling')
     workEnabled = false
   }
-  this.lowThreshold = config.lowThreshold || 10
-  this.highThreshold = config.highThreshold || 20
+  this.lowThreshold = config.lowThreshold || 5
+  this.highThreshold = config.highThreshold || 15
   this.cycles = config.cycles || 2
   if (this.cycles < 1 || this.cycles > 5) {
     this.log.warn('Invalid number of cycles! Disabling')
@@ -97,12 +99,30 @@ function SmartSprinklers (log, config) {
   this.userPO = config.userPO || ''
   this.tokenPO = config.tokenPO || ''
   if (this.pushEnable === true && (this.userPO === '' || this.tokenPO === '')) {
-    this.log.warn('Push enabled but User or Token cant be blank! Disabling Push')
+    this.log.warn('Pushover enabled but User or Token cant be blank! Disabling Push')
     this.pushEnable = false
   }
   this.devicePO = config.devicePO || ''
   this.priorityPO = config.priorityPO || 0
   this.soundPO = config.soundPO || 'pushover'
+  this.pcEnable = config.pcEnable || false
+  this.pcKey = config.pcKey || ''
+  this.pcWeatherChecked = config.pcWeatherChecked || ''
+  this.pcWeatherCheckedSound = config.pcWeatherCheckedSound || 'system'
+  this.pcWateringStart = config.pcWateringStart || ''
+  this.pcWateringStartSound = config.pcWateringStartSound || 'system'
+  this.pcWateringEnd = config.pcWateringEnd || ''
+  this.pcWateringEndSound = config.pcWateringEndSound || 'jobDone'
+  if (this.pcEnable === true && this.pcWeatherChecked === '') {
+    this.log.warn('Pushcut enabled but API Key or Weather Checked notification cant be blank! Disabling Pushcut')
+    this.pcEnable = false
+  }
+  if (this.pcWateringStart === '') {
+    this.pcWateringStart = this.pcWeatherChecked
+  }
+  if (this.pcWateringEnd === '') {
+    this.pcWateringEnd = this.pcWeatherChecked
+  }
   this.JanRad = config.JanRad || 6
   this.FebRad = config.FebRad || 6
   this.MarRad = config.MarRad || 6
@@ -160,6 +180,7 @@ SmartSprinklers.prototype = {
           let mailSubject = ''
           let pushTitle = ''
           let pushMessage = ''
+          let pushcutMessage = ''
 
           const pushover = new Pushover(this.userPO, this.tokenPO)
           pushover
@@ -266,11 +287,12 @@ SmartSprinklers.prototype = {
             this.log('Total watering time: %s minutes', format.minTommss(wateringTime[zDay]))
             this.log('------------------------------------------------')
 
-            let waterMail = '----------------------------------------------------------\n'
+            let waterMail = ''
             waterMail = waterMail + 'Total watering time: ' + format.minTommss(wateringTime[zDay]) + ' minutes\n'
             waterMail = waterMail + 'Start: ' + Weekday[startTime.getDay()] + ' ' + startTime.toLocaleString() + '\n'
             waterMail = waterMail + 'Finish: ' + Weekday[finishTime.getDay()] + ' ' + finishTime.toLocaleString() + '\n'
-            waterMail = waterMail + '----------------------------------------------------------\n'
+            pushcutMessage = '------------------------------------------------\n' + waterMail + '------------------------------------------------\n'
+            waterMail = '----------------------------------------------------------\n' + waterMail + '----------------------------------------------------------\n'
 
             for (let zone = 1; zone <= this.zoned; zone++) {
               if (this.zoneDuration[zone] !== 0) {
@@ -294,32 +316,53 @@ SmartSprinklers.prototype = {
               this.log('------------------------------------------------')
               this.log('Reassessment: %s %s', Weekday[recheck.getDay()], recheck.toLocaleString())
               waterMail = waterMail + 'Reassessment: ' + Weekday[recheck.getDay()].substring(0, 3) + ' ' + recheck.toLocaleString() + '\n'
+              pushcutMessage = pushcutMessage + 'Reassessment: ' + Weekday[recheck.getDay()].substring(0, 3) + ' ' + recheck.toLocaleString() + '\n'
             } else {
               recheckScheduled = false
               this.log('------------------------------------------------')
               this.log('No further reassessment before schedule!')
               waterMail = waterMail + 'No further reassessment before schedule.\n'
+              pushcutMessage = pushcutMessage + 'No further reassessment before schedule.\n'
             }
 
             wateringJob = schedule.scheduleJob(startTime, function () {
               this.log('Starting water cycle 1/%s', this.cycles)
+              pushTitle = 'Starting Irrigation'
+              pushMessage = 'Starting water cycles for: ' + format.minTommss(wateringTime[zDay]) + ' minutes'
               if (this.pushEnable) {
-                pushTitle = 'Starting Irrigation'
-                pushMessage = 'Starting water cycles for: ' + format.minTommss(wateringTime[zDay]) + ' minutes'
-                pushover.send(pushTitle, pushMessage).then(msj => { this.log('Push notification sent') }).catch(err => { this.log.warn('Push Error - Recheck config: ', err.message) })
+                pushover.send(pushTitle, pushMessage).then(msj => { this.log('Pushover notification sent') }).catch(err => { this.log.warn('Pushover Error - Recheck config: ', err.message) })
+              }
+              if (this.pcEnable) {
+                got.post(pcURL + this.pcWateringStart, { json: { text: pushMessage, title: pushTitle, sound: this.pcWateringStartSound, input: format.minTommss(wateringTime[zDay]).toString(), image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
+                  .then(res => {
+                    this.log('Pushcut notification sent')
+                  })
+                  .catch(err => {
+                    this.log('Pushcut Error: %s | %s', err.response.statusCode, err.response.body.error)
+                  })
               }
               this._wateringCycle(1, 1)
             }.bind(this))
+
             wateringScheduled = true
             this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(1)
             if (wateringDone) { mailSubject = '✅ Watering finished | ' + '♒️ Irrigation Scheduled ⏱' } else { mailSubject = '♒️ Irrigation Scheduled ⏱' }
             mailContruct.subject = mailSubject
             mailContruct.text = waterMail + '----------------------------------------------------------\n' + '----------------------FORECAST--------------------\n' + forecastMail
             wateringDone = false
+            pushMessage = waterMail + '----------------------------------------------------------\n' + '----------------------FORECAST--------------------\n' + 'TODAY:\n' + forecastPush
+            pushTitle = mailSubject
             if (this.pushEnable) {
-              pushTitle = mailSubject
-              pushMessage = waterMail + '----------------------------------------------------------\n' + 'TODAY:\n' + forecastPush
-              pushover.send(pushTitle, pushMessage).then(msj => { this.log('Push notification sent') }).catch(err => { this.log.warn('Push Error - Recheck config: ', err.message) })
+              pushover.send(pushTitle, pushMessage).then(msj => { this.log('Pushover notification sent') }).catch(err => { this.log.warn('Pushover Error - Recheck config: ', err.message) })
+            }
+            if (this.pcEnable) {
+              got.post(pcURL + this.pcWeatherChecked, { json: { text: pushcutMessage, title: mailSubject, input: 'Scheduled', sound: this.pcWeatherCheckedSound, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
+                .then(res => {
+                  this.log('Pushcut notification sent')
+                })
+                .catch(err => {
+                  this.log('Pushcut Error: %s | %s', err.response.statusCode, err.response.body.error)
+                })
             }
             if (this.emailEnable) {
               sendEmail(mailTransport, mailContruct).then(res => { this.log('Email notification sent') }).catch(err => { this.log.warn('Error: ', err.message) })
@@ -342,11 +385,11 @@ SmartSprinklers.prototype = {
             }
             if (this.highThreshold > forecast[zDay].max) {
               reasonNoschedule = reasonNoschedule + '-Forecasted MAX temp is less than highThreshold \n'
-              this.log('-Forecasted MAX temp is less that high threshold')
+              this.log('-Forecasted MAX temp is less than high threshold')
             }
             if (this.lowThreshold > forecast[zDay].min) {
               reasonNoschedule = reasonNoschedule + '-Forecasted MIN temp is less than lowThreshold \n'
-              this.log('-Forecasted MIN temp is less that low threshold')
+              this.log('-Forecasted MIN temp is less than low threshold')
             }
             if (wateringTime[zDay] === 0) {
               reasonNoschedule = reasonNoschedule + '-No schedule available or no watering needed \n'
@@ -358,16 +401,28 @@ SmartSprinklers.prototype = {
 
             if (wateringDone) { mailSubject = '✅ Watering finished | ' + '🚫 No Irrigation Scheduled' } else { mailSubject = '🚫 No Irrigation Scheduled' }
             let waterMail = '----------------------------------------------------------\n' + 'No schedule set: \n'
+            pushcutMessage = '------------------------------------------------\n' + 'No schedule set: \n'
             waterMail = waterMail + reasonNoschedule + Weekday[forecast[zDay].sunrise.getDay()] + ', ' + forecast[zDay].sunrise.toLocaleString() + '\n'
+            pushcutMessage = pushcutMessage + reasonNoschedule + Weekday[forecast[zDay].sunrise.getDay()] + ', ' + forecast[zDay].sunrise.toLocaleString() + '\n'
             pushMessage = waterMail
             waterMail = waterMail + '----------------------------------------------------------\n' + '----------------------FORECAST--------------------\n'
             mailContruct.text = waterMail + forecastMail
             mailContruct.subject = mailSubject
             wateringDone = false
+            pushTitle = mailSubject
+            pushcutMessage = pushcutMessage + '------------------------------------------------\n'
+            pushMessage = pushMessage + '----------------------------------------------------------\n' + 'TODAY:\n' + forecastPush
             if (this.pushEnable) {
-              pushTitle = mailSubject
-              pushMessage = pushMessage + '----------------------------------------------------------\n' + 'TODAY:\n' + forecastPush
-              pushover.send(pushTitle, pushMessage).then(msj => { this.log('Push notification sent') }).catch(err => { this.log.warn('Push Error - Recheck config: ', err.message) })
+              pushover.send(pushTitle, pushMessage).then(msj => { this.log('Pushover notification sent') }).catch(err => { this.log.warn('Pushover Error - Recheck config: ', err.message) })
+            }
+            if (this.pcEnable) {
+              got.post(pcURL + this.pcWeatherChecked, { json: { text: pushcutMessage, title: mailSubject, input: 'Not Scheduled', sound: this.pcWeatherCheckedSound, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
+                .then(res => {
+                  this.log('Pushcut notification sent')
+                })
+                .catch(err => {
+                  this.log('Pushcut Error: %s | %s', err.response.statusCode, err.response.body.error)
+                })
             }
             if (this.emailEnable) {
               sendEmail(mailTransport, mailContruct).then(res => { this.log('Email notification sent') }).catch(err => { this.log.warn('Error: ', err.message) })
@@ -407,6 +462,15 @@ SmartSprinklers.prototype = {
         } else {
           this.log('Watering finished')
           wateringDone = true
+          if (this.pcEnable) {
+            got.post(pcURL + this.pcWateringEnd, { json: { text: 'The scheduled irrigation has been completed', title: '✅ Watering Finished!', sound: this.pcWateringEndSound, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
+              .then(res => {
+                this.log('Pushcut Watering End notification sent')
+              })
+              .catch(err => {
+                this.log('Pushcut Error: %s | %s', err.response.statusCode, err.response.body.error)
+              })
+          }
           this._calculateSchedule(function () {})
         }
       }
@@ -454,7 +518,7 @@ SmartSprinklers.prototype = {
   mailHandle: function (value, callback) {
     let state = ''
     if (value === true) { state = 'Enable' } else { state = 'Disable' }
-    this.log('Set email notifications to: %s', state)
+    this.log('Set Email notifications to: %s', state)
     this.emailEnable = value
     storeState('mailState', value)
     callback()
@@ -463,9 +527,18 @@ SmartSprinklers.prototype = {
   pushHandle: function (value, callback) {
     let state = ''
     if (value === true) { state = 'Enable' } else { state = 'Disable' }
-    this.log('Set push notifications to: %s', state)
+    this.log('Set Pushover notifications to: %s', state)
     this.pushEnable = value
     storeState('pushState', value)
+    callback()
+  },
+
+  pushcutHandle: function (value, callback) {
+    let state = ''
+    if (value === true) { state = 'Enable' } else { state = 'Disable' }
+    this.log('Set Pushcut notifications to: %s', state)
+    this.pcEnable = value
+    storeState('pushcutState', value)
     callback()
   },
 
@@ -622,7 +695,7 @@ SmartSprinklers.prototype = {
       }
 
       if (this.pushEnable) {
-        const pushSwitch = new Service.Switch(this.name + ' Push Notify', 'push')
+        const pushSwitch = new Service.Switch(this.name + ' Pushover Notify', 'push')
         pushSwitch.getCharacteristic(Characteristic.On)
           .on('set', this.pushHandle.bind(this))
         getState('pushState').then(ret => {
@@ -635,7 +708,24 @@ SmartSprinklers.prototype = {
         pushSwitch.setCharacteristic(Characteristic.ServiceLabelIndex, this.zoned + 4)
         this.service.addLinkedService(pushSwitch)
         services.push(pushSwitch)
-        this.log('Exposed Push Notification Control')
+        this.log('Exposed Pushover Notification Control')
+      }
+
+      if (this.pcEnable) {
+        const pushcutSwitch = new Service.Switch(this.name + ' Pushcut Notify', 'pushcut')
+        pushcutSwitch.getCharacteristic(Characteristic.On)
+          .on('set', this.pushcutHandle.bind(this))
+        getState('pushcutState').then(ret => {
+          if ((ret === undefined) || (ret === true)) {
+            pushcutSwitch.setCharacteristic(Characteristic.On, true)
+          } else {
+            pushcutSwitch.setCharacteristic(Characteristic.On, false)
+          }
+        })
+        pushcutSwitch.setCharacteristic(Characteristic.ServiceLabelIndex, this.zoned + 5)
+        this.service.addLinkedService(pushcutSwitch)
+        services.push(pushcutSwitch)
+        this.log('Exposed Pushcut Notification Control')
       }
     }
 

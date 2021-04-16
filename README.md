@@ -5,7 +5,7 @@
 
 # Homebridge Smart Irrigation
 
-<p align="center"><a href="https://pushover.net"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/icon-256.png" height="55"></a>    <a href="https://openweathermap.org/"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/logo_white_cropped.png" height="52"></a>    <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/email.png" height="52"></a></p>
+<p align="center"><a href="https://openweathermap.org/"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/logo_white_cropped.png" height="52"></a> <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/email.png" height="52"></a> <a href="https://pushover.net"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/icon-256.png" height="55"></a> <a href="https://www.pushcut.io/"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/SCOM0927-180.png" height="52"></a></p>
 
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)<br>[![npm](https://img.shields.io/npm/dt/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![npm](https://img.shields.io/npm/v/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![NPM](https://img.shields.io/npm/l/homebridge-smart-irrigation?color=red)](https://github.com/MTry/homebridge-smart-irrigation)<br>[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -20,7 +20,7 @@ This [Homebridge](https://github.com/nfarina/homebridge) plugin exposes a multi-
 
 Although a <i>dummy</i>, it brings smarts of an <b>evapotranspiration</b>[<b>ET<sub>o</sub></b>] based climate/plant adaptive irrigation controller with the use of [OpenWeatherMap API](https://openweathermap.org/api). All parameters can be configured from the Homebridge UI and the plugin offers granular control specific to every zone's individual requirements.
 
-The plugin can optionally email you, and/or send you push notifications through [Pushover](https://pushover.net), with the watering schedule it has calculated, or when a watering run is completed, along with the next 7-day weather forecast.
+The plugin can optionally email you, and/or send you push notifications through [Pushover](https://pushover.net) and [Pushcut](https://www.pushcut.io/), with the watering schedule it has calculated, or when a watering run is completed, along with the next 7-day weather forecast.
 
 Added option to expose system controls to Homekit allowing a user to enable/disable irrigation, rechecks, push and email notifications from within the Home App. Associated `WaterLevel` Characteristic shows the `%` of watering cycle remaining.
 
@@ -216,11 +216,12 @@ Start times will vary daily as a result of changing sunrise times as well as the
 ```
 
 ## Primary Setup
->**Expose Controls** - `exposeControls` - exposes up to 4 additional *related* `switch` services allowing a user basic control of the system from within the Home App:
+>**Expose Controls** - `exposeControls` - exposes up to 5 additional *related* `switch` services allowing a user basic control of the system from within the Home App:
 > - **Master:** If exposed, this switch allows enabling or disabling irrigation. When disabled it will cancel any scheduled watering cycles - although the system will continue routine weather checks(and notifications if enabled). Re-enabling will trigger recalculation and rescheduling.
 > - **Recheck:** This is exposed ***only*** if the `recheckTime` has been set to a non-zero value. When disabled it will cancel any scheduled rechecks - although the system will proceed with the scheduled watering cycles. Re-enabling will trigger recalculation and rescheduling.
 > - **Email Notify:** This is exposed ***only*** if `emailEnable` has been set. Enable/disable email notifications.
-> - **Push Notify:** This is exposed ***only*** if `pushEnable` has been set. Enable/disable push notifications.
+> - **Pushover Notify:** This is exposed ***only*** if `pushEnable` has been set. Enable/disable Pushover notifications.
+> - **Pushcut Notify:** This is exposed ***only*** if `pcEnable` has been set. Enable/disable Pushcut notifications.
 
 >These `switch` settings are persistent across plugin/Homebridge restarts, so you shouldn't have to reset your preferences in the Home App!
 
@@ -233,8 +234,8 @@ Start times will vary daily as a result of changing sunrise times as well as the
 | `recheckTime` | Reassess - minutes before runtime | `0` |
 | `cycles` | Number of cycles per watering run | `2` |
 | `sunriseOffset` | Minutes before sunrise that watering should get over by | `0` |
-| `lowThreshold` | Skip scheduling when forecasted minimum temperature falls below this | `10` |
-| `highThreshold` | Skip scheduling when forecasted maximum temperature stays below this | `20` |
+| `lowThreshold` | Skip scheduling when forecasted minimum temperature falls below this | `5` |
+| `highThreshold` | Skip scheduling when forecasted maximum temperature stays below this | `10` |
 | `keyAPI` | Your OpenWeatherMap API Key | N/A |
 | `latitude` | Enter the latitude in decimals including '-' if in the southern hemisphere | N/A |
 | `longitude` | Your decimal longitude | N/A |
@@ -256,7 +257,7 @@ Currently this supports basic authentication. If using Gmail, you will need to g
 | `userPwd` | SMTP Password | N/A |
 
 ## Pushover Notifications Setup
-Push notifications using [Pushover](https://pushover.net/) are now supported.
+Push notifications using [Pushover](https://pushover.net/) are supported.
 
 | Key | Description | Default |
 | --- | --- | --- |
@@ -266,6 +267,25 @@ Push notifications using [Pushover](https://pushover.net/) are now supported.
 | `devicePO` | Receiving devices | `all` |
 | `priorityPO` | Message Priority | `0` |
 | `soundPO` | Notification sound | `pushover` |
+
+## Pushcut Notifications Setup
+Push notifications using [Pushcut](https://www.pushcut.io/) are supported. While HomeKit automations and shortcuts can always be triggered based on service or zone states, this opens up a host of possibilities! Do note that this operates in a slightly different manner compared to [Pushover](https://pushover.net/). Notifications are sent for the following events:
+ - **Weather Check:** This is the notification defined by you in the Pushcut App which will receive a weather check notification with one of two `input` strings [`Scheduled` / `Not Scheduled`]. **This is a compulsory field if Pushcut is enabled.**
+ - **Watering Start:** This is the notification defined by you to receive the watering start notification - if left blank, this notification will be sent to your "Weather Check" notification. The `input` string attached to this notification is the watering duration in minutes.
+ - **Watering End:** This is the notification defined by you to receive the watering end notification - if left blank, this notification will be sent to your "Weather Check" notification.
+
+ This also meaans that on completion of a watering run, 2 notifications **Weather Check** & **Watering End** will be sent.
+
+| Key | Description | Default |
+| --- | --- | --- |
+| `pcEnable` | Enable Pushcut Notifications | `false` |
+| `pcKey` | Your API key | N/A |
+| `pcWeatherChecked` | Your "Weather Checked" notification name | N/A |
+| `pcWeatherCheckedSound` | Notification sound | `system` |
+| `pcWateringStart` | Your "Watering Start" notification name | N/A |
+| `pcWateringStartSound` | Notification sound | `system` |
+| `pcWateringEnd` | Your "Watering End" notification name | N/A |
+| `pcWateringEndSound` | Notification sound | `jobDone` |
 
 ## Monthly data of Mean Daily Solar Radiation [kWh/day]
 

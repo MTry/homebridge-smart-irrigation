@@ -1,6 +1,19 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.4.0 [16-04-2021] - Pushcut is here!!**
+
+### *Added:*
+- Pushcut notifications - on Weather Check, Watering Start & Watering End
+- Pushcut notifications control `switch`
+
+### *Fixed:*
+- Spelling errors in logs
+### *Changes:*
+- `lowThreshold` default [5°C] and range [0-20 °C]
+- `highThreshold` default [10°C] and range [5-30 °C]
+- Corresponding Readme & Changelog updates
+
 ## **1.3.5 [15-04-2021]**
 
 ### *Fixed:*

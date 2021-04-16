@@ -101,21 +101,21 @@
       },        
      "lowThreshold": {
       "title": "Low Threshold Temperature:",
-      "description": "Skip scheduling when forecasted minimum temperature falls below this. [10°C][4°C - 20°C]",
+      "description": "Skip scheduling when forecasted minimum temperature falls below this. [5°C][0°C - 20°C]",
       "type": "number",
       "required": false,
-      "minimum": 4,
+      "minimum": 0,
       "maximum": 20,
-      "default": 10
+      "default": 5
       },
       "highThreshold": {
       "title": "High Threshold Temperature:",
-      "description": "Skip scheduling when forecasted maximum temperature stays below this. [20°C][10°C - 30°C]",
+      "description": "Skip scheduling when forecasted maximum temperature stays below this. [10°C][5°C - 30°C]",
       "type": "number",
       "required": false,
-      "minimum": 10,
+      "minimum": 5,
       "maximum": 30,
-      "default": 20
+      "default": 10
       },
       "emailEnable": {
         "title": "Enable",
@@ -381,6 +381,202 @@
             }
           ]
         },
+        "pcEnable": {
+          "title": "Enable",
+          "description": "Enable Pushcut Notifications",
+          "type": "boolean",
+          "required": false,
+          "default": false
+          },
+          "pcKey": {
+          "title": "API Key:",
+          "type": "string",
+          "required": true,
+          "placeholder": "API key"
+          },      
+          "pcWeatherChecked": {
+          "title": "Weather Checked Notification:",
+          "type": "string",
+          "required": true,
+          "placeholder": "Weather Checked Notification"
+          },
+          "pcWeatherCheckedSound": {
+          "title": "Notification Sound:",
+          "type": "string",
+          "default": "system",
+          "oneOf": [
+              {
+                "title": "vibrateOnly",
+                "enum": [
+                  "vibrateOnly"
+                ]
+              },
+              {
+                "title": "system",
+                "enum": [
+                  "system"
+                ]
+              },
+              {
+                "title": "subtle",
+                "enum": [
+                  "subtle"
+                ]
+              },
+              {
+                "title": "question",
+                "enum": [
+                  "question"
+                ]
+              },
+              {
+                "title": "jobDone",
+                "enum": [
+                  "jobDone"
+                ]
+              },
+              {
+                "title": "problem",
+                "enum": [
+                  "problem"
+                ]
+              },
+              {
+                "title": "loud",
+                "enum": [
+                  "loud"
+                ]
+              },
+              {
+                "title": "lasers",
+                "enum": [
+                  "lasers"
+                ]
+              }
+            ]
+          },
+          "pcWateringStart": {
+            "title": "Watering Start Notification:",
+            "type": "string",
+            "required": false,
+            "placeholder": "Watering Start Notification"
+            },
+            "pcWateringStartSound": {
+            "title": "Notification Sound:",
+            "type": "string",
+            "default": "system",
+            "oneOf": [
+                {
+                  "title": "vibrateOnly",
+                  "enum": [
+                    "vibrateOnly"
+                  ]
+                },
+                {
+                  "title": "system",
+                  "enum": [
+                    "system"
+                  ]
+                },
+                {
+                  "title": "subtle",
+                  "enum": [
+                    "subtle"
+                  ]
+                },
+                {
+                  "title": "question",
+                  "enum": [
+                    "question"
+                  ]
+                },
+                {
+                  "title": "jobDone",
+                  "enum": [
+                    "jobDone"
+                  ]
+                },
+                {
+                  "title": "problem",
+                  "enum": [
+                    "problem"
+                  ]
+                },
+                {
+                  "title": "loud",
+                  "enum": [
+                    "loud"
+                  ]
+                },
+                {
+                  "title": "lasers",
+                  "enum": [
+                    "lasers"
+                  ]
+                }
+              ]
+            },
+            "pcWateringEnd": {
+              "title": "Watering End Notification:",
+              "type": "string",
+              "required": false,
+              "placeholder": "Watering End Notification"
+              },
+              "pcWateringEndSound": {
+              "title": "Notification Sound:",
+              "type": "string",
+              "default": "jobDone",
+              "oneOf": [
+                  {
+                    "title": "vibrateOnly",
+                    "enum": [
+                      "vibrateOnly"
+                    ]
+                  },
+                  {
+                    "title": "system",
+                    "enum": [
+                      "system"
+                    ]
+                  },
+                  {
+                    "title": "subtle",
+                    "enum": [
+                      "subtle"
+                    ]
+                  },
+                  {
+                    "title": "question",
+                    "enum": [
+                      "question"
+                    ]
+                  },
+                  {
+                    "title": "jobDone",
+                    "enum": [
+                      "jobDone"
+                    ]
+                  },
+                  {
+                    "title": "problem",
+                    "enum": [
+                      "problem"
+                    ]
+                  },
+                  {
+                    "title": "loud",
+                    "enum": [
+                      "loud"
+                    ]
+                  },
+                  {
+                    "title": "lasers",
+                    "enum": [
+                      "lasers"
+                    ]
+                  }
+                ]
+              },
 
       "JanRad": {"type": "number", "title": "January", "default":6},
       "FebRad": {"type": "number", "title": "February", "default":6},
@@ -760,6 +956,71 @@
           "htmlClass": "col-xs-4",
           "items": [
             "soundPO"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "title": "Pushcut Notifications Setup",
+      "expandable": true,
+      "expanded": false,
+      "htmlClass": "row",
+      "items": [
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
+            "pcEnable"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-6",
+          "items": [
+            "pcKey"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-6",
+          "items": [
+            "pcWeatherChecked"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
+            "pcWeatherCheckedSound"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-6",
+          "items": [
+            "pcWateringStart"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
+            "pcWateringStartSound"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-6",
+          "items": [
+            "pcWateringEnd"
+          ]
+        },
+        {
+          "type": "section",
+          "htmlClass": "col-xs-4",
+          "items": [
+            "pcWateringEndSound"
           ]
         }
       ]
