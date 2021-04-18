@@ -199,31 +199,13 @@ SmartSprinklers.prototype = {
             forecast[pop].speed = json.daily[pop].wind_speed
             forecast[pop].rain = ('rain' in json.daily[pop]) ? json.daily[pop].rain : 0
             forecast[pop].clouds = json.daily[pop].clouds
-            forecast[pop].ETO = 0
-          }
-
-          let forecastMail = '----------------------------------------------------------\n'
-          for (let dd = 0; dd <= 7; dd++) {
-            forecast[dd].ETO = eto.calculate(forecast[dd], SolarRad[forecast[dd].sunrise.getMonth()], this.altitude, this.latitude)
+            forecast[pop].ETO = eto.calculate(forecast[pop], SolarRad[forecast[pop].sunrise.getMonth()], this.altitude, this.latitude)
             if (this.verbosed) {
               this.log('-----------------------------------------------------')
-              this.log('%s on %s %s with %s% clouds & %s% RH', forecast[dd].summary, Weekday[forecast[dd].sunrise.getDay()], forecast[dd].sunrise.toLocaleDateString(), forecast[dd].clouds, forecast[dd].humidity)
-              this.log('ETo:%smm|Rain:%smm|Min:%s°C|Max:%s°C|Wind:%sm/s', forecast[dd].ETO.toFixed(2), forecast[dd].rain, forecast[dd].min, forecast[dd].max, forecast[dd].speed)
+              this.log('%s on %s %s with %s% clouds & %s% RH', forecast[pop].summary, Weekday[forecast[pop].sunrise.getDay()], forecast[pop].sunrise.toLocaleDateString(), forecast[pop].clouds, forecast[pop].humidity)
+              this.log('ETo:%smm|Rain:%smm|Min:%s°C|Max:%s°C|Wind:%sm/s', forecast[pop].ETO.toFixed(2), forecast[pop].rain, forecast[pop].min, forecast[pop].max, forecast[pop].speed)
             }
-            forecastMail = forecastMail + forecast[dd].summary + ' on ' + Weekday[forecast[dd].sunrise.getDay()] + ' with ' + forecast[dd].clouds + '% clouds' + '\n'
-            forecastMail = forecastMail + 'Sunrise: ' + forecast[dd].sunrise.toLocaleString() + '  |  RH: ' + forecast[dd].humidity + '%\n'
-            forecastMail = forecastMail + '[Min | Max] Temp: ' + forecast[dd].min + '°C | ' + forecast[dd].max + '°C' + '\n'
-            forecastMail = forecastMail + 'Pressure: ' + forecast[dd].pressure + ' hPa | Wind: ' + forecast[dd].speed + ' m/s' + '\n'
-            forecastMail = forecastMail + 'Precipitation: ' + forecast[dd].rain + ' mm | ETo: ' + forecast[dd].ETO.toFixed(2) + ' mm' + '\n'
-            forecastMail = forecastMail + '----------------------------------------------------------\n'
           }
-          let forecastPush = ''
-          forecastPush = forecast[0].summary + ' today with ' + forecast[0].clouds + '% clouds' + '\n'
-          forecastPush = forecastPush + 'Sunrise: ' + forecast[0].sunrise.toLocaleString() + '  |  RH: ' + forecast[0].humidity + '%\n'
-          forecastPush = forecastPush + '[Min | Max] Temp: ' + forecast[0].min + '°C | ' + forecast[0].max + '°C' + '\n'
-          forecastPush = forecastPush + 'Pressure: ' + forecast[0].pressure + ' hPa | Wind: ' + forecast[0].speed + ' m/s' + '\n'
-          forecastPush = forecastPush + 'Precipitation: ' + forecast[0].rain + ' mm | ETo: ' + forecast[0].ETO.toFixed(2) + ' mm' + '\n'
-          forecastPush = forecastPush + '----------------------------------------------------------\n'
 
           let WaterNeeded = 0
           const wateringTime = new Array(this.zoned).fill(0)
@@ -348,9 +330,9 @@ SmartSprinklers.prototype = {
             this.service.getCharacteristic(Characteristic.ProgramMode).updateValue(1)
             if (wateringDone) { mailSubject = '✅ Watering finished | ' + '♒️ Irrigation Scheduled ⏱' } else { mailSubject = '♒️ Irrigation Scheduled ⏱' }
             mailContruct.subject = mailSubject
-            mailContruct.text = waterMail + '----------------------------------------------------------\n' + '----------------------FORECAST--------------------\n' + forecastMail
+            mailContruct.text = waterMail + '----------------------------------------------------------\n' + '----------------------FORECAST--------------------\n' + format.forecastMail(forecast, Weekday)
             wateringDone = false
-            pushMessage = waterMail + '----------------------------------------------------------\n' + '----------------------FORECAST--------------------\n' + 'TODAY:\n' + forecastPush
+            pushMessage = waterMail + format.forecastPush(forecast, Weekday)
             pushTitle = mailSubject
             if (this.pushEnable) {
               pushover.send(pushTitle, pushMessage).then(msj => { this.log('Pushover notification sent') }).catch(err => { this.log.warn('Pushover Error - Recheck config: ', err.message) })
@@ -406,12 +388,12 @@ SmartSprinklers.prototype = {
             pushcutMessage = pushcutMessage + reasonNoschedule + Weekday[forecast[zDay].sunrise.getDay()] + ', ' + forecast[zDay].sunrise.toLocaleString() + '\n'
             pushMessage = waterMail
             waterMail = waterMail + '----------------------------------------------------------\n' + '----------------------FORECAST--------------------\n'
-            mailContruct.text = waterMail + forecastMail
+            mailContruct.text = waterMail + format.forecastMail(forecast, Weekday)
             mailContruct.subject = mailSubject
             wateringDone = false
             pushTitle = mailSubject
             pushcutMessage = pushcutMessage + '------------------------------------------------\n'
-            pushMessage = pushMessage + '----------------------------------------------------------\n' + 'TODAY:\n' + forecastPush
+            pushMessage = pushMessage + format.forecastPush(forecast, Weekday)
             if (this.pushEnable) {
               pushover.send(pushTitle, pushMessage).then(msj => { this.log('Pushover notification sent') }).catch(err => { this.log.warn('Pushover Error - Recheck config: ', err.message) })
             }

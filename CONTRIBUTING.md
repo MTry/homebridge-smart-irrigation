@@ -33,11 +33,11 @@ It is most helpful to have:
 - Any specific configuration settings
 - What you expect should happen
 - What actually happens
-- AAny other suggestions or inputs you feel are relevant to the issue
+- Any other suggestions or inputs you feel are relevant to the issue
 
 ## Use a Consistent Coding Style
 
-* Please use [standardjs](https://standardjs.com)
+* Please use Javascript Standard Style - [standardjs](https://standardjs.com)
 
 ## License
 **By contributing, you agree that your contributions will be licensed under its MIT License.**

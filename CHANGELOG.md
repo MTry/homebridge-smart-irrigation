@@ -1,6 +1,16 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.4.1 [19-04-2021]**
+
+### *Added:*
+- Code of Conduct, Contribution & Security Policy
+- Discord & Reddit link to Readme
+
+### *Changes:*
+- Code optimisation
+- Some refactoring for code clarity
+
 ## **1.4.0 [16-04-2021] - Pushcut is here!!**
 
 ### *Added:*
@@ -52,7 +62,6 @@ All meaningful changes will be logged here.
 ### *Fixed:*
 
 - Semver alignment
-
 
 ## **1.2.11 [09-04-2021] - Home App Controls**
 
