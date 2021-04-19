@@ -393,7 +393,14 @@
           "type": "string",
           "required": true,
           "placeholder": "API key"
-          },      
+          },
+          "pcDevices": {
+          "title": "Pushcut Devices(leave blank for all):",
+          "type": "string",
+          "required": false,
+          "placeholder": "device1,device2,...",
+          "description": "Device list seperated by comma - WITHOUT SPACE after comma!"
+          },        
           "pcWeatherChecked": {
           "title": "Weather Checked Notification:",
           "type": "string",
@@ -969,17 +976,24 @@
       "items": [
         {
           "type": "section",
-          "htmlClass": "col-xs-4",
+          "htmlClass": "col-xs-3",
           "items": [
             "pcEnable"
           ]
         },
         {
           "type": "section",
-          "htmlClass": "col-xs-6",
+          "htmlClass": "col-xs-4",
           "items": [
             "pcKey"
           ]
+        },
+        {
+        "type": "section",
+        "htmlClass": "col-xs-4",
+        "items": [
+          "pcDevices"
+        ]
         },
         {
           "type": "section",

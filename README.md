@@ -122,6 +122,15 @@ Start times will vary daily as a result of changing sunrise times as well as the
             "devicePO": "iphone",
             "priorityPO": 0,
             "soundPO": "pushover",
+            "pcEnable": true,
+            "pcKey": "abcdXXXXabcd",
+            "pcDevices": "iPad,iPhone",
+            "pcWeatherChecked": "Test Checked",
+            "pcWeatherCheckedSound": "system",
+            "pcWateringStart": "Test Start",
+            "pcWateringStartSound": "system",
+            "pcWateringEnd": "Test End",
+            "pcWateringEndSound": "jobDone",
             "JanRad": 5.4,
             "FebRad": 6.3,
             "MarRad": 7,
@@ -281,6 +290,7 @@ Push notifications using [Pushcut](https://www.pushcut.io/) are supported. While
 | --- | --- | --- |
 | `pcEnable` | Enable Pushcut Notifications | `false` |
 | `pcKey` | Your API key | N/A |
+| `pcDevices` | Device list seperated by comma - **WITHOUT SPACE after comma!** | `all` |
 | `pcWeatherChecked` | Your "Weather Checked" notification name | N/A |
 | `pcWeatherCheckedSound` | Notification sound | `system` |
 | `pcWateringStart` | Your "Watering Start" notification name | N/A |

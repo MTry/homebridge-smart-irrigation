@@ -1,6 +1,11 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.5.0 [19-04-2021]**
+
+### *Added:*
+- Ability to specify receiving devices with Pushcut
+
 ## **1.4.1 [19-04-2021]**
 
 ### *Added:*
