@@ -1,6 +1,11 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.5.1 [20-04-2021] - Bug fix**
+
+### *Fixed:*
+- Declaration scope leading to plugin crash
+
 ## **1.5.0 [19-04-2021]**
 
 ### *Added:*

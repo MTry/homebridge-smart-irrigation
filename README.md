@@ -369,6 +369,8 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 ## Support/Contribution
 
+A ⭐️ star would be great!
+
 I dont have a great deal of programming experience so the biggest help and contribution you can make is helping with the code or "Way forward.." items!
 
 If financial contribution is on your agenda, may I humbly redirect you to [Homebridge](https://github.com/nfarina/) which makes this community possible. Also consider supporting several fine developers who offer an incredible amount of their time and effort in supporting the community and creating extraordinary plugins.

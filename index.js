@@ -27,6 +27,7 @@ let wateringScheduled = false
 let fullTime = 0
 const pcImage = 'https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/pcimage.png'
 const pcURL = 'https://api.pushcut.io/v1/notifications/'
+let pushcutDevices = []
 
 async function storeState (param, state) {
   await storage.init({ dir: cacheDirectory, forgiveParseErrors: true })
@@ -185,9 +186,9 @@ SmartSprinklers.prototype = {
           let pushTitle = ''
           let pushMessage = ''
           let pushcutMessage = ''
-          let pcDevices = []
+          //          let pcDevices = []
           if (this.pcDevices !== '') {
-            pcDevices = this.pcDevices.split(',')
+            pushcutDevices = this.pcDevices.split(',')
           }
 
           const pushover = new Pushover(this.userPO, this.tokenPO)
@@ -323,7 +324,7 @@ SmartSprinklers.prototype = {
                 pushover.send(pushTitle, pushMessage).then(msj => { this.log('Pushover notification sent') }).catch(err => { this.log.warn('Pushover Error - Recheck config: ', err.message) })
               }
               if (this.pcEnable) {
-                got.post(pcURL + this.pcWateringStart, { json: { text: pushMessage, title: pushTitle, sound: this.pcWateringStartSound, input: format.minTommss(wateringTime[zDay]).toString(), devices: pcDevices, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
+                got.post(pcURL + this.pcWateringStart, { json: { text: pushMessage, title: pushTitle, sound: this.pcWateringStartSound, input: format.minTommss(wateringTime[zDay]).toString(), devices: pushcutDevices, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
                   .then(res => {
                     this.log('Pushcut notification sent')
                   })
@@ -346,7 +347,7 @@ SmartSprinklers.prototype = {
               pushover.send(pushTitle, pushMessage).then(msj => { this.log('Pushover notification sent') }).catch(err => { this.log.warn('Pushover Error - Recheck config: ', err.message) })
             }
             if (this.pcEnable) {
-              got.post(pcURL + this.pcWeatherChecked, { json: { text: pushcutMessage, title: mailSubject, input: 'Scheduled', sound: this.pcWeatherCheckedSound, devices: pcDevices, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
+              got.post(pcURL + this.pcWeatherChecked, { json: { text: pushcutMessage, title: mailSubject, input: 'Scheduled', sound: this.pcWeatherCheckedSound, devices: pushcutDevices, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
                 .then(res => {
                   this.log('Pushcut notification sent')
                 })
@@ -406,7 +407,7 @@ SmartSprinklers.prototype = {
               pushover.send(pushTitle, pushMessage).then(msj => { this.log('Pushover notification sent') }).catch(err => { this.log.warn('Pushover Error - Recheck config: ', err.message) })
             }
             if (this.pcEnable) {
-              got.post(pcURL + this.pcWeatherChecked, { json: { text: pushcutMessage, title: mailSubject, input: 'Not Scheduled', sound: this.pcWeatherCheckedSound, devices: pcDevices, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
+              got.post(pcURL + this.pcWeatherChecked, { json: { text: pushcutMessage, title: mailSubject, input: 'Not Scheduled', sound: this.pcWeatherCheckedSound, devices: pushcutDevices, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
                 .then(res => {
                   this.log('Pushcut notification sent')
                 })
@@ -453,7 +454,7 @@ SmartSprinklers.prototype = {
           this.log('Watering finished')
           wateringDone = true
           if (this.pcEnable) {
-            got.post(pcURL + this.pcWateringEnd, { json: { text: 'The scheduled irrigation has been completed', title: '✅ Watering Finished!', sound: this.pcWateringEndSound, devices: pcDevices, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
+            got.post(pcURL + this.pcWateringEnd, { json: { text: 'The scheduled irrigation has been completed', title: '✅ Watering Finished!', sound: this.pcWateringEndSound, devices: pushcutDevices, image: pcImage }, headers: { 'API-Key': this.pcKey }, responseType: 'json' })
               .then(res => {
                 this.log('Pushcut Watering End notification sent')
               })
