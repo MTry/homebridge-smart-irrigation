@@ -7,7 +7,7 @@
 
 <p align="center"><a href="https://openweathermap.org/"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/logo_white_cropped.png" height="52"></a> <a href="https://github.com/MTry/homebridge-smart-irrigation"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/email.png" height="52"></a> <a href="https://pushover.net"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/icon-256.png" height="55"></a> <a href="https://www.pushcut.io/"><img src="https://raw.githubusercontent.com/MTry/homebridge-smart-irrigation/master/branding/SCOM0927-180.png" height="53"></a></p>
 
-[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)<br>[![npm](https://img.shields.io/npm/dt/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![npm](https://img.shields.io/npm/v/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![NPM](https://img.shields.io/npm/l/homebridge-smart-irrigation?color=red)](https://github.com/MTry/homebridge-smart-irrigation)<br>[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)<br>[![Discord](https://img.shields.io/discord/432663330281226270?logo=discord&style=social)](https://discord.com/channels/432663330281226270/832814985343926365) [![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/homebridge?style=social)
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)<br>[![npm](https://badgen.net/npm/dt/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![github](https://badgen.net/github/release/MTry/homebridge-smart-irrigation)](https://www.npmjs.com/package/homebridge-smart-irrigation) [![github](https://badgen.net/npm/license/homebridge-smart-irrigation?color=red)](https://github.com/MTry/homebridge-smart-irrigation)<br>[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![github](https://badgen.net/github/last-commit/MTry/homebridge-smart-irrigation)](https://github.com/MTry/homebridge-smart-irrigation)<br>[![Discord](https://img.shields.io/discord/432663330281226270?logo=discord&style=social)](https://discord.com/channels/432663330281226270/832814985343926365) [![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/homebridge?style=social)
 ](https://www.reddit.com/r/homebridge/)
 
 
@@ -364,6 +364,8 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 ## Way forward..
 
 - [ ] Use live daily shortwave solar radiation data/forecast through an API instead of relying on having to feed historical averages.. the only  service I am aware of which has a free option is [Solcast](https://solcast.com/solar-radiation-data/) which offers 10 API calls a day. Any suggestions if its worth doing this?
+
+- [ ] Integrate Telegram notifications
 
 - [ ] Prettier HTML email notifications!
 
