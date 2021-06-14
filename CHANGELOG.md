@@ -1,6 +1,11 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.5.2 [14-06-2021] - Bug fix**
+
+### *Fixed:*
+- Security update
+
 ## **1.5.1 [20-04-2021] - Bug fix**
 
 ### *Fixed:*
