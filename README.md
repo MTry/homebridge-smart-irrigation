@@ -367,6 +367,8 @@ High--stronger winds and greater exposure: `1.1 - 1.4`<br>
 
 - [ ] Integrate Telegram notifications
 
+- [ ] Integration of FakeGato
+
 - [ ] Prettier HTML email notifications!
 
 ## Support/Contribution
