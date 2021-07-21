@@ -1,6 +1,11 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.5.3 [21-07-2021] - nodemailer update**
+
+### *Changes:*
+- Upgrade nodemailer from 6.6.1 to 6.6.2
+
 ## **1.5.2 [14-06-2021] - Bug fix**
 
 ### *Fixed:*
