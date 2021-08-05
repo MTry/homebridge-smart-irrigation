@@ -57,7 +57,7 @@
     "got": ">=11.8.2",
     "node-persist": ">=3.1.0",
     "node-schedule": ">=2.0.0",
-    "nodemailer": ">=6.6.2",
+    "nodemailer": ">=6.6.3",
     "pushover-js": ">=1.3.1"
   }
 }
