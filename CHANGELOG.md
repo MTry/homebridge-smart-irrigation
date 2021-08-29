@@ -1,6 +1,11 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.5.4 [29-08-2021] - security updates**
+
+### *Changes:*
+- Upgrade dependencies versions
+
 ## **1.5.3 [21-07-2021] - nodemailer update**
 
 ### *Changes:*
