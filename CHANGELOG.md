@@ -1,6 +1,16 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.6.0 [30-03-2022] - module update**
+
+### *Changes:*
+- module updates/bug fixes (thanks @angyalz)
+
+## **1.5.5 [30-03-2022] - security updates**
+
+### *Changes:*
+- Upgrade dependencies versions
+
 ## **1.5.4 [29-08-2021] - security updates**
 
 ### *Changes:*
