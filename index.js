@@ -3,15 +3,20 @@
 
 'use strict'
 let Service, Characteristic
-const packageJson = require('./package.json')
-const schedule = require('node-schedule')
-const nodemailer = require('nodemailer')
-const got = require('got')
-const Pushover = require('pushover-js').Pushover
-const storage = require('node-persist')
+import { readFile } from 'fs/promises';
+const packageJson = JSON.parse(
+  await readFile(
+    new URL('./package.json', import.meta.url)
+  )
+);
+import schedule from 'node-schedule';
+import nodemailer from 'nodemailer';
+import got from 'got';
+import { Pushover } from 'pushover-js';
+import storage from 'node-persist';
 
-const format = require('./lib/format')
-const eto = require('./lib/eto')
+import * as format from './lib/format.js';
+import * as eto from './lib/eto.js';
 
 let workEnabled = true
 const cacheDirectory = './homebridge-smart-irrigation/storage'
@@ -47,7 +52,7 @@ async function sendEmail (transport, matter) {
   }
 }
 
-module.exports = function (homebridge) {
+export default (homebridge) => {
   Service = homebridge.hap.Service
   Characteristic = homebridge.hap.Characteristic
   homebridge.registerAccessory('homebridge-smart-irrigation', 'SmartSprinklers', SmartSprinklers)

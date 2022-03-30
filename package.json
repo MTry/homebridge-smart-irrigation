@@ -21,6 +21,7 @@
     "node": ">=10.0.0"
   },
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "standard",
     "lint": "eslint .  --ext .js"
@@ -54,7 +55,9 @@
     "standard": "*"
   },
   "dependencies": {
-    "got": ">=11.8.3",
+
+    "got": ">=12.0.3",
+
     "node-persist": ">=3.1.0",
     "node-schedule": ">=2.1.0",
     "nodemailer": ">=6.6.5",
