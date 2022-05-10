@@ -19,7 +19,7 @@ import * as format from './lib/format.js';
 import * as eto from './lib/eto.js';
 
 let workEnabled = true
-const cacheDirectory = './homebridge-smart-irrigation/storage'
+let cacheDirectory = ''
 const mailTransport = {}
 const mailContruct = {}
 let wateringDone = false
@@ -56,6 +56,7 @@ export default (homebridge) => {
   Service = homebridge.hap.Service
   Characteristic = homebridge.hap.Characteristic
   homebridge.registerAccessory('homebridge-smart-irrigation', 'SmartSprinklers', SmartSprinklers)
+  cacheDirectory = homebridge.user.storagePath()
 }
 
 function SmartSprinklers (log, config) {

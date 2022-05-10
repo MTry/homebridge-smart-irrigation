@@ -1,6 +1,14 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.7.0 [10-05-2022] - Big fix**
+
+### *Fixed:*
+- Storage cache location - should now work on all platforms - including docker!
+
+### *PLEASE NOTE:*
+- The location update on cache directory may impact the state of controls as saved earlier - please set again on your home app once.
+
 ## **1.6.0 [30-03-2022] - module update**
 
 ### *Changes:*
