@@ -1,6 +1,13 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.7.1 [10-05-2022] - Bug fix**
+
+### *Fixed:*
+- Storage cache location - should now work on all platforms - including docker!
+
+- Fixed subdirectory name so existing platforms not affected by this will keep the persisting control settings from earlier.
+
 ## **1.7.0 [10-05-2022] - Big fix**
 
 ### *Fixed:*

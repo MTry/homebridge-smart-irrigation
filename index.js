@@ -56,7 +56,7 @@ export default (homebridge) => {
   Service = homebridge.hap.Service
   Characteristic = homebridge.hap.Characteristic
   homebridge.registerAccessory('homebridge-smart-irrigation', 'SmartSprinklers', SmartSprinklers)
-  cacheDirectory = homebridge.user.storagePath()
+  cacheDirectory = homebridge.user.storagePath() + '/homebridge-smart-irrigation/storage'
 }
 
 function SmartSprinklers (log, config) {
