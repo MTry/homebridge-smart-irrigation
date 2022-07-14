@@ -1,6 +1,11 @@
 # Change Log
 All meaningful changes will be logged here.
 
+## **1.7.2 [14-07-2022] - dependency fix**
+
+### *Fixed:*
+- Bumps got from 11.8.3 to 11.8.5.
+
 ## **1.7.1 [10-05-2022] - Bug fix**
 
 ### *Fixed:*
