@@ -165,7 +165,7 @@ SmartSprinklers.prototype = {
   _calculateSchedule: function (callback) {
     if (workEnabled) {
       for (const job in schedule.scheduledJobs) schedule.cancelJob(job)
-      const url = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + this.latitude + '&lon=' + this.longitude + '&exclude=current,minutely,hourly,alerts&units=metric&appid=' + this.keyAPI
+      const url = 'https://api.openweathermap.org/data/3.0/onecall?lat=' + this.latitude + '&lon=' + this.longitude + '&exclude=current,minutely,hourly,alerts&units=metric&appid=' + this.keyAPI
       this.log.debug('Retrieving weather data: %s', url)
       let json = {}
 
