@@ -55,7 +55,7 @@
     "standard": "*"
   },
   "dependencies": {
-    "got": ">=11.8.5",
+    "got": ">=12.6.0",
     "node-persist": ">=3.1.0",
     "node-schedule": ">=2.1.0",
     "nodemailer": ">=6.7.7",
